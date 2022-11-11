@@ -540,20 +540,20 @@ internal class MetadataVisitor : ExpressionVisitor
         return MakeDirtyMeta(b.Type, null, Visit(b.Expression));
     }
 
-    protected override Expression VisitUnary(UnaryExpression u)
+    protected override Expression VisitUnary(UnaryExpression node)
     {
-        var exp = (MetaExpression)Visit(u.Operand);
+        var exp = (MetaExpression)Visit(node.Operand);
 
-        if (u.NodeType == ExpressionType.Convert || u.NodeType == ExpressionType.TypeAs)
+        if (node.NodeType == ExpressionType.Convert || node.NodeType == ExpressionType.TypeAs)
         {
-            var imps = exp.Meta.Implementations?.Let(s => CastImplementations(s, u.Type.CleanType()));
+            var imps = exp.Meta.Implementations?.Let(s => CastImplementations(s, node.Type.CleanType()));
 
-            return new MetaExpression(u.Type, exp.Meta is DirtyMeta ?
+            return new MetaExpression(node.Type, exp.Meta is DirtyMeta ?
                 (Meta)new DirtyMeta(imps, ((DirtyMeta)exp.Meta).CleanMetas.Cast<Meta>().ToArray()) :
                 (Meta)new CleanMeta(imps, ((CleanMeta)exp.Meta).PropertyRoutes));
         }
 
-        return new MetaExpression(u.Type, exp.Meta);
+        return new MetaExpression(node.Type, exp.Meta);
     }
 
     internal static Implementations CastImplementations(Implementations implementations, Type cleanType)

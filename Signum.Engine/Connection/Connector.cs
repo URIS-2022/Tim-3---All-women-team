@@ -189,7 +189,6 @@ public abstract class ParameterBuilder
                 throw new InvalidOperationException("Attempt to use a non-Utc date in the database");
 
             //Problematic with Time machine
-            //if (Schema.Current.TimeZoneMode != TimeZoneMode.Utc && dateTime.Value.Kind == DateTimeKind.Utc)
             //    throw new InvalidOperationException("Attempt to use a Utc date in the database");
         }
 

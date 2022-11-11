@@ -130,7 +130,7 @@ public static class Administrator
         Console.WriteLine("Done.");
     }
 
-    public static Func<bool> AvoidSimpleSynchronize = () => true;
+    public static readonly Func<bool> AvoidSimpleSynchronize = () => true;
 
     public static void Synchronize()
     {

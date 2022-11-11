@@ -110,17 +110,6 @@ VALUES ({parameters.ToString(p => p.ParameterName, ", ")})";
     }
 
     /// <summary>
-    /// Always retrieves the entity from the database WITHOUT reading or writing in the Lite.Entity field.
-    /// </summary>
-    public static T Retrieve<T>(this Lite<T> lite) where T : class, IEntity
-    {
-        if (lite == null)
-            throw new ArgumentNullException(nameof(lite));
-
-        return (T)(object)Retrieve(lite.EntityType, lite.Id);
-    }
-
-    /// <summary>
     /// Always retrieves the entity from the database asynchronously WITHOUT reading or writing in the Lite.Entity field.
     /// </summary>
     public static async Task<T> RetrieveAsync<T>(this Lite<T> lite, CancellationToken token) where T : class, IEntity
@@ -132,6 +121,17 @@ VALUES ({parameters.ToString(p => p.ParameterName, ", ")})";
     }
 
     static readonly GenericInvoker<Func<PrimaryKey, Entity>> giRetrieve = new(id => Retrieve<Entity>(id));
+
+    /// <summary>
+    /// Always retrieves the entity from the database WITHOUT reading or writing in the Lite.Entity field.
+    /// </summary>
+    public static T Retrieve<T>(this Lite<T> lite) where T : class, IEntity
+    {
+        if (lite == null)
+            throw new ArgumentNullException(nameof(lite));
+
+        return (T)(object)Retrieve(lite.EntityType, lite.Id);
+    }
     public static T Retrieve<T>(PrimaryKey id) where T : Entity
     {
         using (HeavyProfiler.Log("DBRetrieve", () => typeof(T).TypeName()))
@@ -262,11 +262,6 @@ VALUES ({parameters.ToString(p => p.ParameterName, ", ")})";
         return giTryRetrieveLite.GetInvoker(type)(id, modelType);
     }
 
-    public static Lite<Entity> RetrieveLite(Type type, PrimaryKey id, Type? modelType = null)
-    {
-        return giRetrieveLite.GetInvoker(type)(id, modelType);
-    }
-
     public static Task<Lite<Entity>> RetrieveLiteAsync(Type type, PrimaryKey id, CancellationToken token, Type? modelType = null)
     {
         return giRetrieveLiteAsync.GetInvoker(type)(id, token, modelType).CastTask<Lite<Entity>>();
@@ -315,6 +310,11 @@ VALUES ({parameters.ToString(p => p.ParameterName, ", ")})";
 
 
     static readonly GenericInvoker<Func<PrimaryKey, Type?, Lite<Entity>>> giRetrieveLite = new((id, modelType) => RetrieveLite<Entity>(id, modelType));
+
+    public static Lite<Entity> RetrieveLite(Type type, PrimaryKey id, Type? modelType = null)
+    {
+        return giRetrieveLite.GetInvoker(type)(id, modelType);
+    }
     public static Lite<T> RetrieveLite<T>(PrimaryKey id, Type? modelType = null)
         where T : Entity
     {
@@ -406,8 +406,9 @@ VALUES ({parameters.ToString(p => p.ParameterName, ", ")})";
     }
 
 
-    public static object GetLiteModel(Type type, PrimaryKey id, Type? modelType = null) => giGetLiteModel.GetInvoker(type)(id, modelType);
+    
     static readonly GenericInvoker<Func<PrimaryKey, Type?, object>> giGetLiteModel = new((id, modelType) => GetLiteModel<Entity>(id, modelType));
+    public static object GetLiteModel(Type type, PrimaryKey id, Type? modelType = null) => giGetLiteModel.GetInvoker(type)(id, modelType);
     public static object GetLiteModel<T>(PrimaryKey id, Type? modelType)
         where T : Entity
     {
