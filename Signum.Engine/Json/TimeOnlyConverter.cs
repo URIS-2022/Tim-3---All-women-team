@@ -11,7 +11,7 @@ public class TimeOnlyConverter : JsonConverter<TimeOnly>
 
     public override TimeOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        var str = (string)reader.GetString()!;
+        var str = reader.GetString()!;
         return TimeOnly.ParseExact(str, TimeFormat, CultureInfo.InvariantCulture);
     }
 

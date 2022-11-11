@@ -4,7 +4,7 @@ namespace Signum.Engine.Connection;
 
 public static class SqlServerRetry
 {
-    public static int MaxRetryCount = 6;
+    public readonly static int MaxRetryCount = 6;
 
     ///  must not be lesser than 1.
     public static double DefaultRandomFactor = 1.1;

@@ -125,13 +125,6 @@ VALUES ({parameters.ToString(p => p.ParameterName, ", ")})";
     /// <summary>
     /// Always retrieves the entity from the database WITHOUT reading or writing in the Lite.Entity field.
     /// </summary>
-    public static T Retrieve<T>(this Lite<T> lite) where T : class, IEntity
-    {
-        if (lite == null)
-            throw new ArgumentNullException(nameof(lite));
-
-        return (T)(object)Retrieve(lite.EntityType, lite.Id);
-    }
     public static T Retrieve<T>(PrimaryKey id) where T : Entity
     {
         using (HeavyProfiler.Log("DBRetrieve", () => typeof(T).TypeName()))
@@ -180,6 +173,13 @@ VALUES ({parameters.ToString(p => p.ParameterName, ", ")})";
     }
 
     static readonly GenericInvoker<Func<PrimaryKey, CancellationToken, Task>> giRetrieveAsync = new((id, token) => RetrieveAsync<Entity>(id, token));
+    public static T Retrieve<T>(this Lite<T> lite) where T : class, IEntity
+    {
+        if (lite == null)
+            throw new ArgumentNullException(nameof(lite));
+
+        return (T)(object)Retrieve(lite.EntityType, lite.Id);
+    }
     public static async Task<T> RetrieveAsync<T>(PrimaryKey id, CancellationToken token) where T : Entity
     {
         using (HeavyProfiler.Log("DBRetrieve", () => typeof(T).TypeName()))

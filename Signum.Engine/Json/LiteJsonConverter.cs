@@ -142,7 +142,7 @@ public class LiteJsonConverter<T> : JsonConverterWithExisting<Lite<T>>
 
         var result = model != null ? 
             (Lite<T>)entity.ToLiteFat(model) : 
-            (Lite<T>)entity.ToLiteFat(getModelType()); ;
+            (Lite<T>)entity.ToLiteFat(getModelType()); 
 
         if (result.EntityType != type)
             throw new InvalidOperationException("Types don't match");

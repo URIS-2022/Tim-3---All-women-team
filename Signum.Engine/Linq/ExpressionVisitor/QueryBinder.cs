@@ -2238,7 +2238,6 @@ internal class QueryBinder : ExpressionVisitor
 
         if (expressions.All(i => i.Value is PrimaryKeyExpression))
         {
-            var type = expressions.Select(i => i.Value.Type).Distinct().SingleEx();
 
             var dic = expressions.SelectDictionary(exp => ((PrimaryKeyExpression)exp).Value);
 
@@ -3403,7 +3402,6 @@ class UnionAllRequest : ExpansionRequest, QueryBinder.ICombineStrategy
 
             var dirty = (DityExpression)kvp.Value;
 
-            var table = Implementations[kvp.Key].Table;
 
             var projector = ColumnUnionProjector.Project(dirty.projector, dirty.candidates, this, kvp.Key);
 

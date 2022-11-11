@@ -250,7 +250,7 @@ internal class OverloadingSimplifier : ExpressionVisitor
             {
                 var source = Visit(m.GetArgument("source"));
 
-                var keySelector = (LambdaExpression)Visit(m.GetArgument("keySelector")).StripQuotes();
+                var keySelector = Visit(m.GetArgument("keySelector")).StripQuotes();
 
                 Type elemType = source.Type.ElementType()!;
 

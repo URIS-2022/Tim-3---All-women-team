@@ -274,7 +274,7 @@ internal class DbExpressionNominator : DbExpressionVisitor
         Expression? obj = Visit(sqlFunction.Object);
         ReadOnlyCollection<Expression> args = Visit(sqlFunction.Arguments);
         if (args != sqlFunction.Arguments || obj != sqlFunction.Object)
-            sqlFunction = new SqlFunctionExpression(sqlFunction.Type, obj, sqlFunction.SqlFunction, args); ;
+            sqlFunction = new SqlFunctionExpression(sqlFunction.Type, obj, sqlFunction.SqlFunction, args); 
 
         if (args.All(Has) && (obj == null || Has(obj)))
             return Add(sqlFunction);
