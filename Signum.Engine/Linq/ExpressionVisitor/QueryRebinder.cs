@@ -254,7 +254,6 @@ internal class QueryRebinder : DbExpressionVisitor
             {
                 ColumnExpression? colExp = CurrentScope[col];
                 //if (expr is ColumnExpression colExp)
-                //{
                 ColumnDeclaration? cd = cg.Columns.FirstOrDefault(c => c!.Expression.Equals(colExp));
                 if (cd == null)
                     cd = cg.MapColumn(colExp!);

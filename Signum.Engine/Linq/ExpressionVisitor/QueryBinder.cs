@@ -3508,7 +3508,6 @@ class QueryJoinExpander : DbExpressionVisitor
 
         var reqs = requests.TryGetC(source);
 
-        //if (reqs != null)
         //    requests.Remove(source);
 
         var result = base.VisitSource(source);

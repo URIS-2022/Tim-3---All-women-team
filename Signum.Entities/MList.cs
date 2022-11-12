@@ -371,14 +371,6 @@ public class MList<T> : Modifiable, IList<T>, IList, INotifyCollectionChanged, I
         }
     }
 
-    public void Insert(int index, T item)
-    {
-        AssertNotSealed();
-        innerList.Insert(index, new RowIdElement(item));
-        SetSelfModified();
-        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, index));
-    }
-
     public bool Remove(T item)
     {
         AssertNotSealed();
@@ -773,6 +765,13 @@ public class MList<T> : Modifiable, IList<T>, IList, INotifyCollectionChanged, I
     {
         this.AssignMList((MList<T>)newList);
         this.PostRetrieving(ctx);
+    }
+    public void Insert(int index, T item)
+    {
+        AssertNotSealed();
+        innerList.Insert(index, new RowIdElement(item));
+        SetSelfModified();
+        OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, index));
     }
 
     public void Insert(int? index, object? value)

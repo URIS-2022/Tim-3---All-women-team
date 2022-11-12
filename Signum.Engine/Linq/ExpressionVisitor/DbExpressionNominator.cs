@@ -286,7 +286,7 @@ internal class DbExpressionNominator : DbExpressionVisitor
     {
         ReadOnlyCollection<Expression> args = Visit(sqlFunction.Arguments, a => Visit(a));
         if (args != sqlFunction.Arguments)
-            sqlFunction = new SqlTableValuedFunctionExpression(sqlFunction.SqlFunction, sqlFunction.ViewTable, sqlFunction.SingleColumnType, sqlFunction.Alias, args); ;
+            sqlFunction = new SqlTableValuedFunctionExpression(sqlFunction.SqlFunction, sqlFunction.ViewTable, sqlFunction.SingleColumnType, sqlFunction.Alias, args); 
 
         if (args.All(Has))
             return Add(sqlFunction);
@@ -1090,7 +1090,6 @@ internal class DbExpressionNominator : DbExpressionVisitor
         throw new InvalidOperationException();
     }
 
-    static readonly MethodInfo miSimpleConcat = ReflectionTools.GetMethodInfo(() => string.Concat("a", "b"));
 
 
     protected override Expression VisitConditional(ConditionalExpression c)
