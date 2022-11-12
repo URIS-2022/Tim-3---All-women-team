@@ -741,9 +741,8 @@ public class EntityCodeGenerator
             parts.Add("SqlDbType = SqlDbType." + col.DbType.SqlServer);
 
         var defaultSize = CurrentSchema.Settings.GetSqlSize(null, null, pair.DbType);
-        if (defaultSize != null && !(defaultSize == col.Length || defaultSize == int.MaxValue && col.Length == -1))
+        if ((defaultSize != null && !(defaultSize == col.Length || defaultSize == int.MaxValue && col.Length == -1)) && (!(defaultSize == col.Length || defaultSize == int.MaxValue && col.Length == -1)))
         {
-            if (!(defaultSize == col.Length || defaultSize == int.MaxValue && col.Length == -1))
                 if (col.Length == -1)
                 {
                     parts.Add("Size = " + "int.MaxValue");

@@ -226,8 +226,6 @@ public class ExtensionWithParameterInfo<T, K, V> : IExtensionDictionaryInfo
 
             if (e is MetaExpression me && me.Meta is CleanMeta cm && cm.PropertyRoutes.Any())
             {
-                var cleanType = me!.Type.CleanType();
-
                 result.PropertyRoute = cm.PropertyRoutes.Only();
                 result.Implementations = me.Meta.Implementations;
                 result.Format = ColumnDescriptionFactory.GetFormat(cm.PropertyRoutes);
