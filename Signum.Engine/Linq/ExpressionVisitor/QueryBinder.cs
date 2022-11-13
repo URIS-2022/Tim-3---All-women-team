@@ -2496,7 +2496,6 @@ internal class QueryBinder : ExpressionVisitor
 
             //if (left is ProjectionExpression && !((ProjectionExpression)left).IsOneCell  ||
             //    right is ProjectionExpression && !((ProjectionExpression)right).IsOneCell)
-            //    throw new InvalidOperationException("Comparing {0} and {1} is not valid in SQL".FormatWith(b.Left.ToString(), b.Right.ToString()));
 
             if (left.Type.IsNullable() == right.Type.IsNullable())
                 return Expression.MakeBinary(b.NodeType, left, right, b.IsLiftedToNull, b.Method);

@@ -41,7 +41,7 @@ public static class SqlServerRetry
         return new Disposable(() => _suspended.Value = true);
     }
 
-    public static Func<bool> IsEnabled = () => Connector.Current?.RequiresRetry ?? true;
+    public readonly static Func<bool> IsEnabled = () => Connector.Current?.RequiresRetry ?? true;
 
     //https://docs.microsoft.com/en-us/azure/sql-database/sql-database-connectivity-issues
     public static T Retry<T>(Func<T> action)

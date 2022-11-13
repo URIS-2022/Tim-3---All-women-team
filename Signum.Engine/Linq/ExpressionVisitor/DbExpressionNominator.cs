@@ -235,36 +235,36 @@ internal class DbExpressionNominator : DbExpressionVisitor
             return base.VisitNew(nex);
     }
 
-    protected override Expression VisitConstant(ConstantExpression c)
+    protected override Expression VisitConstant(ConstantExpression node)
     {
-        Type ut = c.Type.UnNullify();
+        Type ut = node.Type.UnNullify();
         if (ut == typeof(PrimaryKey) && isFullNominate)
         {
-            if (c.Value == null)
+            if (node.Value == null)
                 return Add(Expression.Constant(null, typeof(object)));
             else
-                return Add(Expression.Constant(((PrimaryKey)c.Value).Object));
+                return Add(Expression.Constant(((PrimaryKey)node.Value).Object));
         }
 
         if (!innerProjection && IsFullNominateOrAggresive)
         {
             if (ut == typeof(DayOfWeek))
             {
-                var dayNumber = c.Value == null ? (int?)null :
-                    isPostgres ? (int)(DayOfWeek)c.Value :
-                    ToDayOfWeekExpression.ToSqlWeekDay((DayOfWeek)c.Value, ((SqlServerConnector)Connector.Current).DateFirst);
+                var dayNumber = node.Value == null ? (int?)null :
+                    isPostgres ? (int)(DayOfWeek)node.Value :
+                    ToDayOfWeekExpression.ToSqlWeekDay((DayOfWeek)node.Value, ((SqlServerConnector)Connector.Current).DateFirst);
 
                 return new ToDayOfWeekExpression(Add(Expression.Constant(dayNumber, typeof(int?))));
             }
 
             if (Schema.Current.Settings.IsDbType(ut))
-                return Add(c);
+                return Add(node);
 
-            if (c.Type == typeof(object) && (c.IsNull() || (Schema.Current.Settings.IsDbType(c.Value!.GetType()))))
-                return Add(c);
+            if (node.Type == typeof(object) && (node.IsNull() || (Schema.Current.Settings.IsDbType(node.Value!.GetType()))))
+                return Add(node);
         }
 
-        return c;
+        return node;
     }
 
 
