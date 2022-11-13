@@ -117,9 +117,9 @@ public class PostgreSqlConnector : Connector
         return ((NpgsqlParameter)p).NpgsqlDbType.ToString().ToUpperInvariant();
     }
 
-    public override void RollbackTransactionPoint(DbTransaction transaction, string savePointName)
+    public override void RollbackTransactionPoint(DbTransaction Transaction, string savePointName)
     {
-        ((NpgsqlTransaction)transaction).Rollback(savePointName);
+        ((NpgsqlTransaction)Transaction).Rollback(savePointName);
     }
 
     public override void SaveTransactionPoint(DbTransaction transaction, string savePointName)
