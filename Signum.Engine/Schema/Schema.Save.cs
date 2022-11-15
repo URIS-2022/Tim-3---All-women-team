@@ -721,7 +721,7 @@ BEGIN
 
 {collections?.PlainSql().Indent(4)}
 {virtualMList?.PlainSql().Indent(4)}
-END $$;"); ;
+END $$;");
         }
         else if (isGuid)
         {
@@ -863,7 +863,7 @@ END $$;"); ;
 
     void PrepareEntitySync(Entity entity)
     {
-        Schema current = Schema.Current;
+        
         DirectedGraph<Modifiable> modifiables = Saver.PreSaving(() => GraphExplorer.FromRoot(entity));
 
         var error = GraphExplorer.FullIntegrityCheck(modifiables);

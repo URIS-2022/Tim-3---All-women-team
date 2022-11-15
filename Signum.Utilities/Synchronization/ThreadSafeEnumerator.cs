@@ -57,5 +57,6 @@ public class TreadSafeEnumerator<T>: IEnumerable<T>, IEnumerator<T>
 
     public void Dispose()
     {
+        throw new NotSupportedException();
     }
 }

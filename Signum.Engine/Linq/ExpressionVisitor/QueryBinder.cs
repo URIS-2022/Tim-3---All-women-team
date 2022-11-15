@@ -176,7 +176,6 @@ internal class QueryBinder : ExpressionVisitor
         else if (m.Method.DeclaringType == typeof(Lite) && (m.Method.Name == "ToLite" || m.Method.Name == "ToLiteFat"))
         {
             var entity = Visit(m.GetArgument("entity"));
-            var converted = EntityCasting(entity, Lite.Extract(m.Type)!)!;
             
             
             Expression? model = Visit(m.TryGetArgument("model")); //could be null
@@ -3802,7 +3801,6 @@ class AssignAdapterExpander : DbExpressionVisitor
         }
         else if (left.IsNull() && right.IsNull())
         {
-            Type type = left.Type.Nullify();
             var newRight = DbExpressionNominator.ConvertNull(right, left.Type.Nullify());
 
             return Expression.Condition(condition, left, newRight);

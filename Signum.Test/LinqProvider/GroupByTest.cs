@@ -221,6 +221,7 @@ public class GroupByTest
     public void GroupEntityByTypeIbCount()
     {
         var list = Database.Query<AlbumEntity>().GroupBy(a => a.Author.GetType()).Select(gr => new { gr.Key, Count = gr.Count() }).ToList();
+        Assert.NotNull(list);
     }
 
     [Fact]

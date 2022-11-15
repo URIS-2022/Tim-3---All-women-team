@@ -1093,6 +1093,17 @@ VALUES ({parameters.ToString(p => p.ParameterName, ", ")})";
         giDeleteId.GetInvoker(type)(id);
     }
 
+    public static void Delete<T>(PrimaryKey id)
+        where T : Entity
+    {
+        using (HeavyProfiler.Log("DBDelete", () => typeof(T).TypeName()))
+        {
+            int result = Database.Query<T>().Where(a => a.Id == id).UnsafeDelete();
+            if (result != 1)
+                throw new EntityNotFoundException(typeof(T), id);
+        }
+    }
+
     public static void Delete<T>(this Lite<T> lite)
         where T : class, IEntity
     {
@@ -1118,16 +1129,7 @@ VALUES ({parameters.ToString(p => p.ParameterName, ", ")})";
     }
 
     static readonly GenericInvoker<Action<PrimaryKey>> giDeleteId = new(id => Delete<Entity>(id));
-    public static void Delete<T>(PrimaryKey id)
-        where T : Entity
-    {
-        using (HeavyProfiler.Log("DBDelete", () => typeof(T).TypeName()))
-        {
-            int result = Database.Query<T>().Where(a => a.Id == id).UnsafeDelete();
-            if (result != 1)
-                throw new EntityNotFoundException(typeof(T), id);
-        }
-    }
+    
 
 
     public static void DeleteList<T>(IList<T> collection)

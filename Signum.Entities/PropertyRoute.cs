@@ -347,7 +347,7 @@ public class PropertyRoute : IEquatable<PropertyRoute>, ISerializable
             if (text.Length == 0)
                 return new Sequence<string>();
 
-            if (text.Contains("["))
+            if (text.Contains('['))
                 return new Sequence<string>
                 {
                     splitMixin(text.Before("[")),

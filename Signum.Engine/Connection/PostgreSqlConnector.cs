@@ -160,7 +160,7 @@ public class PostgreSqlConnector : Connector
 
         if (preCommand.Parameters != null)
         {
-            foreach (NpgsqlParameter param in preCommand.Parameters)
+            foreach (DbParameter param in preCommand.Parameters)
             {
                 cmd.Parameters.Add(param);
             }
