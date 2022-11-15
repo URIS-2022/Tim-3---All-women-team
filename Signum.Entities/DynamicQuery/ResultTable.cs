@@ -365,7 +365,7 @@ public class ResultRow : INotifyPropertyChanged
         {
             isDirty = value;
 
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsDirty"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsDirty)));
         }
     }
 

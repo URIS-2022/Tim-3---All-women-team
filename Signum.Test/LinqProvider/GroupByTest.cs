@@ -175,6 +175,7 @@ public class GroupByTest
     public void WhereGroup()
     {
         var list = Database.Query<ArtistEntity>().Where(a => a.Dead).GroupBy(a => a.Sex).ToList();
+        Assert.NotNull(list);
     }
 
     [Fact]

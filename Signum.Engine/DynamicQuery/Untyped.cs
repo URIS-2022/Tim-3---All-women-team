@@ -202,12 +202,6 @@ public static class Untyped
 
     static readonly GenericInvoker<Func<IEnumerable, Delegate, IEnumerable>> giThenByE = new((col, del) => ((IOrderedEnumerable<object>)col).ThenBy((Func<object, object?>)del));
     static readonly GenericInvoker<Func<IEnumerable, Delegate, IEnumerable>> giThenByDescendingE = new((col, del) => ((IOrderedEnumerable<object>)col).ThenByDescending((Func<object, object?>)del));
-    public static IEnumerable ThenBy(IEnumerable collection, LambdaExpression lambda, OrderType orderType)
-    {
-        var mi = orderType == OrderType.Ascending ? giThenByE : giThenByDescendingE;
-
-        return mi.GetInvoker(lambda.Type.GetGenericArguments())(collection, lambda.Compile());
-    }
 
     public static IEnumerable OrderBy(IEnumerable collection, List<(LambdaExpression lambda, OrderType orderType)> orders)
     {
@@ -235,6 +229,12 @@ public static class Untyped
 
     static MethodInfo miThenByQ = ReflectionTools.GetMethodInfo(() => Database.Query<TypeEntity>().OrderBy(t => t.Id).ThenBy(t => t.Id)).GetGenericMethodDefinition();
     static MethodInfo miThenByDescendingQ = ReflectionTools.GetMethodInfo(() => Database.Query<TypeEntity>().OrderBy(t => t.Id).ThenByDescending(t => t.Id)).GetGenericMethodDefinition();
+    public static IEnumerable ThenBy(IEnumerable collection, LambdaExpression lambda, OrderType orderType)
+    {
+        var mi = orderType == OrderType.Ascending ? giThenByE : giThenByDescendingE;
+
+        return mi.GetInvoker(lambda.Type.GetGenericArguments())(collection, lambda.Compile());
+    }
     public static IOrderedQueryable ThenBy(IOrderedQueryable query, LambdaExpression lambda, OrderType orderType)
     {
         MethodInfo mi = (orderType == OrderType.Ascending ? miThenByQ : miThenByDescendingQ).MakeGenericMethod(lambda.Type.GetGenericArguments());
