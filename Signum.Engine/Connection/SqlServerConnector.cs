@@ -347,8 +347,8 @@ public class SqlServerConnector : Connector
             return se.Number switch
             {
                 -2 => new TimeoutException(ex.Message, ex),
-                2601 => new UniqueKeyException(ex),
-                547 => new ForeignKeyException(ex),
+                2601 => new IUniqueKeyException(ex),
+                547 => new IForeignKeyException(ex),
                 _ => ex,
             };
         }

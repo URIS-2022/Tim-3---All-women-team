@@ -335,18 +335,6 @@ public static class Administrator
         return DisableIdentity(table);
     }
 
-    public static bool IsIdentityBehaviourDisabled(ITable table)
-    {
-        return identityBehaviourDisabled.Value?.Contains(table) == true;
-    }
-
-    [DebuggerStepThrough]
-    public static IQueryable<T> QueryDisableAssertAllowed<T>() where T : Entity
-    {
-        return new SignumTable<T>(DbQueryProvider.Single, Schema.Current.Table<T>(), disableAssertAllowed: true);
-    }
-
-    static AsyncThreadVariable<ImmutableStack<ITable>?> identityBehaviourDisabled = Statics.ThreadVariable<ImmutableStack<ITable>?>("identityBehaviourOverride");
     public static IDisposable DisableIdentity(ITable table, bool behaviourOnly = false)
     {
         if (!table.IdentityBehaviour)
@@ -367,6 +355,19 @@ public static class Administrator
                 sqlBuilder.SetIdentityInsert(table.Name, false).ExecuteNonQuery();
         });
     }
+
+    public static bool IsIdentityBehaviourDisabled(ITable table)
+    {
+        return identityBehaviourDisabled.Value?.Contains(table) == true;
+    }
+
+    [DebuggerStepThrough]
+    public static IQueryable<T> QueryDisableAssertAllowed<T>() where T : Entity
+    {
+        return new SignumTable<T>(DbQueryProvider.Single, Schema.Current.Table<T>(), disableAssertAllowed: true);
+    }
+
+    static AsyncThreadVariable<ImmutableStack<ITable>?> identityBehaviourDisabled = Statics.ThreadVariable<ImmutableStack<ITable>?>("identityBehaviourOverride");
 
     public static T SaveDisableIdentity<T>(T entity)
         where T : Entity

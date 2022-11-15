@@ -926,7 +926,7 @@ internal class QueryFormatter : DbExpressionVisitor
 
     protected internal IDisposable? PrintSelectRowCount(bool returnRowCount)
     {
-        if (returnRowCount == false)
+        if (!returnRowCount)
             return null;
 
         if (!this.isPostgres)

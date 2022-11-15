@@ -228,6 +228,11 @@ public static class Lite
         return giNewLite.GetInvoker(type, typeof(string))(id, null);
     }
 
+    public static Lite<T> Create<T>(PrimaryKey id) where T : Entity
+    {
+        return new LiteImp<T, string>(id, null);
+    }
+
     public static Lite<Entity> Create(Type type, PrimaryKey id, object model)
     {
         return giNewLite.GetInvoker(type, model.GetType())(id, model);
@@ -253,6 +258,25 @@ public static class Lite
     }
 
     [DebuggerStepThrough]
+    public static Lite<T> ToLite<T>(this T entity, object model)
+        where T : class, IEntity
+    {
+        if (entity.IsNew)
+            throw new InvalidOperationException("ToLite is not allowed for new entities, use ToLiteFat instead");
+
+        return (Lite<T>)giNewLite.GetInvoker(entity.GetType(), model.GetType())(entity.Id, model);
+    }
+
+    [DebuggerStepThrough]
+    public static Lite<T> ToLite<T>(this T entity, bool fat) where T : class, IEntity
+    {
+        if (fat)
+            return entity.ToLiteFat();
+        else
+            return entity.ToLite();
+    }
+
+    [DebuggerStepThrough]
     public static Lite<T> ToLite<T>(this T entity, Type modelType)
      where T : class, IEntity
     {
@@ -271,16 +295,6 @@ public static class Lite
             return new[] { typeof(string) };
 
         return dic.Keys.PreAnd(typeof(string));
-    }
-
-    [DebuggerStepThrough]
-    public static Lite<T> ToLite<T>(this T entity, object model)
-        where T : class, IEntity
-    {
-        if (entity.IsNew)
-            throw new InvalidOperationException("ToLite is not allowed for new entities, use ToLiteFat instead");
-
-        return (Lite<T>)giNewLite.GetInvoker(entity.GetType(), model.GetType())(entity.Id, model);
     }
 
     [DebuggerStepThrough]
@@ -308,15 +322,6 @@ public static class Lite
       where T : class, IEntity
     {
         return (Lite<T>)giNewLiteFat.GetInvoker(entity.GetType(), model.GetType())((Entity)(IEntity)entity, model);
-    }
-
-    [DebuggerStepThrough]
-    public static Lite<T> ToLite<T>(this T entity, bool fat) where T : class, IEntity
-    {
-        if (fat)
-            return entity.ToLiteFat();
-        else
-            return entity.ToLite();
     }
 
     [DebuggerStepThrough]
@@ -390,6 +395,22 @@ public static class Lite
         return giGetModel.GetInvoker(e.GetType(), modelType)((Entity)e);
     }
 
+    public static M ConstructModel<T, M>(T e)
+       where T : Entity
+    {
+        var lmc = LiteModelConstructors.TryGetC(typeof(T))?.TryGetC(typeof(M));
+
+        if (lmc == null)
+        {
+            if (typeof(M) == typeof(string))
+                return (M)(object)e.ToString()!;
+
+            throw new InvalidOperationException($"Entity '{typeof(T).TypeName()}' has not registered LiteModelConstructor for '{typeof(M).TypeName()}'");
+        }
+
+        return ((LiteModelConstructor<T, M>)lmc).ConstructorFunction(e);
+    }
+
     public static string ModelTypeToString(Type modelType)
     {
         if (modelType == typeof(string))
@@ -415,24 +436,9 @@ public static class Lite
     }
 
     static GenericInvoker<Func<Entity, object>> giGetModel = new GenericInvoker<Func<Entity, object>>((e) => ConstructModel<Entity, string>(e));
-    public static M ConstructModel<T, M>(T e)
-        where T : Entity
-    {
-        var lmc = LiteModelConstructors.TryGetC(typeof(T))?.TryGetC(typeof(M));
-
-        if (lmc == null)
-        {
-            if (typeof(M) == typeof(string))
-                return (M)(object)e.ToString()!;
-
-            throw new InvalidOperationException($"Entity '{typeof(T).TypeName()}' has not registered LiteModelConstructor for '{typeof(M).TypeName()}'");
-        }
-
-        return ((LiteModelConstructor<T, M>)lmc).ConstructorFunction(e);
-    }
 
     public static LambdaExpression GetModelConstructorExpression(Type entityType, Type modelType) => giGetModelConstructorExpression.GetInvoker(entityType, modelType)();
-    static readonly GenericInvoker<Func<LambdaExpression>> giGetModelConstructorExpression = new(() => GetModelConstructorExpression<Entity, string>());
+    
     public static Expression<Func<T, M>> GetModelConstructorExpression<T, M>()
     where T : Entity
     {
@@ -453,7 +459,7 @@ public static class Lite
         return ((LiteModelConstructor<T, M>)lmc).ConstructorExpression;
     }
 
-
+    static readonly GenericInvoker<Func<LambdaExpression>> giGetModelConstructorExpression = new(() => GetModelConstructorExpression<Entity, string>());
 
 
     [MethodExpander(typeof(IsExpander))]
@@ -494,6 +500,44 @@ public static class Lite
             return object.ReferenceEquals(lite1.EntityOrNull, lite2.EntityOrNull);
     }
 
+    [MethodExpander(typeof(IsEntityLiteExpander))]
+    public static bool Is<T>(this T? entity1, Lite<T>? lite2)
+        where T : class, IEntity
+    {
+        if (entity1 == null && lite2 == null)
+            return true;
+
+        if (entity1 == null || lite2 == null)
+            return false;
+
+        if (entity1.GetType() != lite2.EntityType)
+            return false;
+
+        if (entity1.IdOrNull != null)
+            return entity1.Id == lite2.IdOrNull;
+        else
+            return object.ReferenceEquals(entity1, lite2.EntityOrNull);
+    }
+
+    [MethodExpander(typeof(IsLiteEntityExpander))]
+    public static bool Is<T>(this Lite<T>? lite1, T? entity2)
+        where T : class, IEntity
+    {
+        if (lite1 == null && entity2 == null)
+            return true;
+
+        if (lite1 == null || entity2 == null)
+            return false;
+
+        if (lite1.EntityType != entity2.GetType())
+            return false;
+
+        if (lite1.IdOrNull != null)
+            return lite1.Id == entity2.IdOrNull;
+        else
+            return object.ReferenceEquals(lite1.EntityOrNull, entity2);
+    }
+
     class IsEntityLiteExpander : IMethodExpander
     {
         static MethodInfo miToLazy = ReflectionTools.GetMethodInfo((TypeEntity type) => type.ToLite()).GetGenericMethodDefinition();
@@ -513,25 +557,6 @@ public static class Lite
 
             return Expression.Equal(toLite, lite);
         }
-    }
-
-    [MethodExpander(typeof(IsEntityLiteExpander))]
-    public static bool Is<T>(this T? entity1, Lite<T>? lite2)
-         where T : class, IEntity
-    {
-        if (entity1 == null && lite2 == null)
-            return true;
-
-        if (entity1 == null || lite2 == null)
-            return false;
-
-        if (entity1.GetType() != lite2.EntityType)
-            return false;
-
-        if (entity1.IdOrNull != null)
-            return entity1.Id == lite2.IdOrNull;
-        else
-            return object.ReferenceEquals(entity1, lite2.EntityOrNull);
     }
 
     class IsLiteEntityExpander : IMethodExpander
@@ -555,25 +580,6 @@ public static class Lite
         }
     }
 
-    [MethodExpander(typeof(IsLiteEntityExpander))]
-    public static bool Is<T>(this Lite<T>? lite1, T? entity2)
-        where T : class, IEntity
-    {
-        if (lite1 == null && entity2 == null)
-            return true;
-
-        if (lite1 == null || entity2 == null)
-            return false;
-
-        if (lite1.EntityType != entity2.GetType())
-            return false;
-
-        if (lite1.IdOrNull != null)
-            return lite1.Id == entity2.IdOrNull;
-        else
-            return object.ReferenceEquals(lite1.EntityOrNull, entity2);
-    }
-
     public static XDocument EntityDGML(this Entity entity)
     {
         return GraphExplorer.FromRootVirtual(entity).EntityDGML();
@@ -588,12 +594,6 @@ public static class Lite
     public static Type CleanType(this Type t)
     {
         return Lite.Extract(t) ?? t;
-    }
-
-
-    public static Lite<T> Create<T>(PrimaryKey id) where T : Entity
-    {
-        return new LiteImp<T, string>(id, null);
     }
 
     public static Lite<T> Create<T>(PrimaryKey id, object model) where T : Entity

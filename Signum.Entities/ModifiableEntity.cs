@@ -271,7 +271,7 @@ public abstract class ModifiableEntity : Modifiable, IModifiableEntity, ICloneab
 
     public void NotifyToString()
     {
-        NotifyPrivate("ToStringProperty");
+        NotifyPrivate(nameof(ToStringProperty));
     }
 
     void NotifyPrivate(string propertyName)
