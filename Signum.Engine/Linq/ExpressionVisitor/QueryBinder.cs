@@ -2239,7 +2239,6 @@ internal class QueryBinder : ExpressionVisitor
 
         if (expressions.All(i => i.Value is PrimaryKeyExpression))
         {
-            var type = expressions.Select(i => i.Value.Type).Distinct().SingleEx();
 
             var dic = expressions.SelectDictionary(exp => ((PrimaryKeyExpression)exp).Value);
 
@@ -2498,7 +2497,6 @@ internal class QueryBinder : ExpressionVisitor
 
             //if (left is ProjectionExpression && !((ProjectionExpression)left).IsOneCell  ||
             //    right is ProjectionExpression && !((ProjectionExpression)right).IsOneCell)
-            //    throw new InvalidOperationException("Comparing {0} and {1} is not valid in SQL".FormatWith(b.Left.ToString(), b.Right.ToString()));
 
             if (left.Type.IsNullable() == right.Type.IsNullable())
                 return Expression.MakeBinary(b.NodeType, left, right, b.IsLiftedToNull, b.Method);
@@ -3409,7 +3407,6 @@ class UnionAllRequest : ExpansionRequest, QueryBinder.ICombineStrategy
 
             var dirty = (DityExpression)kvp.Value;
 
-            var table = Implementations[kvp.Key].Table;
 
             var projector = ColumnUnionProjector.Project(dirty.projector, dirty.candidates, this, kvp.Key);
 
@@ -3516,7 +3513,6 @@ class QueryJoinExpander : DbExpressionVisitor
 
         var reqs = requests.TryGetC(source);
 
-        //if (reqs != null)
         //    requests.Remove(source);
 
         var result = base.VisitSource(source);

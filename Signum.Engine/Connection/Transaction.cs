@@ -212,7 +212,7 @@ public class Transaction : IDisposableException
     class NamedTransaction : ICoreTransaction
     {
         ICoreTransaction parent;
-        string savePointName;
+        readonly string savePointName;
         public Exception? IsRolledback { get; private set; }
         public bool Started { get; private set; }
         public event Action<Dictionary<string, object>?>? PostRealCommit;
@@ -326,7 +326,6 @@ public class Transaction : IDisposableException
                     }
                 }
 
-                //Transaction.Commit();
             }
         }
 
@@ -345,7 +344,6 @@ public class Transaction : IDisposableException
         {
             if (Started && IsRolledback == null)
             {
-                //Transaction.Rollback();
                 IsRolledback = ex;
                 Rolledback?.Invoke(this.UserData);
             }

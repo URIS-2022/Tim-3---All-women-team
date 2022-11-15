@@ -227,7 +227,6 @@ internal class OverloadingSimplifier : ExpressionVisitor
                     group = Expression.Call(method, group);
                 }
 
-                //IQueryable<R> Join<TOuter, TInner, TKey, R>(this IQueryable<TOuter> outer, IEnumerable<TInner> inner, Expression<Func<TOuter, TKey>> outerKeySelector, Expression<Func<TInner, TKey>> innerKeySelector, Expression<Func<TOuter, TInner, R>> resultSelector);
 
                 MethodInfo mij = (query ? miJoinQ : miJoinE)
                     .MakeGenericMethod(tO, groupingType, tK, tR);
@@ -250,7 +249,7 @@ internal class OverloadingSimplifier : ExpressionVisitor
             {
                 var source = Visit(m.GetArgument("source"));
 
-                var keySelector = (LambdaExpression)Visit(m.GetArgument("keySelector")).StripQuotes();
+                var keySelector = Visit(m.GetArgument("keySelector")).StripQuotes();
 
                 Type elemType = source.Type.ElementType()!;
 

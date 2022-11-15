@@ -175,6 +175,7 @@ public class GroupByTest
     public void WhereGroup()
     {
         var list = Database.Query<ArtistEntity>().Where(a => a.Dead).GroupBy(a => a.Sex).ToList();
+        Assert.NotNull(list);
     }
 
     [Fact]
@@ -336,6 +337,7 @@ public class GroupByTest
     public void SumSimplification()
     {
         var songsAlbum = Database.Query<BandEntity>().Select(a => new { a.Name, Sum = a.Members.Sum(m => m.Name.Length) }).Select(a => a.Name).ToList();
+        Assert.NotNull(songsAlbum);
     }
 
     [Fact]

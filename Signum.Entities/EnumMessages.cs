@@ -124,7 +124,7 @@ public enum EntityControlMessage
 }
 
 [DescriptionOptions(DescriptionOptions.Members), InTypeScript(true)]
-public enum BooleanEnum
+public enum Boolean
 {
     [Description("No")]
     False = 0,

@@ -36,7 +36,6 @@ public class OperationsToken : QueryToken
         return _OperationsTokenKey;
     }
 
-/*    Type type;*/
     public override Type Type { get { return typeof(OperationsToken); } }
 
     string key;

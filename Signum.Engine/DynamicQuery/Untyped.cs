@@ -9,6 +9,10 @@ public static class Untyped
 {
     static MethodInfo miSelectQ =
         ReflectionTools.GetMethodInfo(() => ((IQueryable<string>)null!).Select((Expression<Func<string, int>>)null!)).GetGenericMethodDefinition();
+
+    static GenericInvoker<Func<IEnumerable, Delegate, IEnumerable>> giSelectE =
+    new((q, selector) => ((IEnumerable<string>)q).Select((Func<string, int>)selector));
+
     public static IQueryable Select(IQueryable query, LambdaExpression selector)
     {
         var types = selector.Type.GenericTypeArguments;
@@ -17,9 +21,6 @@ public static class Untyped
 
         return query.Provider.CreateQuery(Expression.Call(null, mi, new Expression[] { query.Expression, Expression.Quote(selector) }));
     }
-
-    static GenericInvoker<Func<IEnumerable, Delegate, IEnumerable>> giSelectE =
-    new((q, selector) => ((IEnumerable<string>)q).Select((Func<string, int>)selector));
     public static IEnumerable Select(IEnumerable collection, Delegate selector)
     {
         var types = selector.GetType().GenericTypeArguments;
@@ -44,7 +45,6 @@ public static class Untyped
     {
         var types = resultSelector.GetType().GenericTypeArguments;
 
-        var mi = miSelectManyQ.MakeGenericMethod(types);
 
         return giSelectManyE.GetInvoker(types)(collection, collectionSelector, resultSelector);
     }
@@ -106,13 +106,13 @@ public static class Untyped
 
     static GenericInvoker<Func<IEnumerable, int, IEnumerable>> giSkipE =
         new((q, limit) => ((IEnumerable<string>)q).Skip<string>(limit));
+    static MethodInfo miSkipQ =
+      ReflectionTools.GetMethodInfo(() => ((IQueryable<string>)null!).Skip(3)).GetGenericMethodDefinition();
     public static IEnumerable Skip(IEnumerable collection, int limit, Type elementType)
     {
         return giSkipE.GetInvoker(elementType)(collection, limit);
     }
 
-    static MethodInfo miSkipQ =
-      ReflectionTools.GetMethodInfo(() => ((IQueryable<string>)null!).Skip(3)).GetGenericMethodDefinition();
     public static IQueryable Skip(IQueryable query, int limit, Type elementType)
     {
         var mi = miSkipQ.MakeGenericMethod(elementType);
@@ -202,12 +202,6 @@ public static class Untyped
 
     static readonly GenericInvoker<Func<IEnumerable, Delegate, IEnumerable>> giThenByE = new((col, del) => ((IOrderedEnumerable<object>)col).ThenBy((Func<object, object?>)del));
     static readonly GenericInvoker<Func<IEnumerable, Delegate, IEnumerable>> giThenByDescendingE = new((col, del) => ((IOrderedEnumerable<object>)col).ThenByDescending((Func<object, object?>)del));
-    public static IEnumerable ThenBy(IEnumerable collection, LambdaExpression lambda, OrderType orderType)
-    {
-        var mi = orderType == OrderType.Ascending ? giThenByE : giThenByDescendingE;
-
-        return mi.GetInvoker(lambda.Type.GetGenericArguments())(collection, lambda.Compile());
-    }
 
     public static IEnumerable OrderBy(IEnumerable collection, List<(LambdaExpression lambda, OrderType orderType)> orders)
     {
@@ -235,6 +229,12 @@ public static class Untyped
 
     static MethodInfo miThenByQ = ReflectionTools.GetMethodInfo(() => Database.Query<TypeEntity>().OrderBy(t => t.Id).ThenBy(t => t.Id)).GetGenericMethodDefinition();
     static MethodInfo miThenByDescendingQ = ReflectionTools.GetMethodInfo(() => Database.Query<TypeEntity>().OrderBy(t => t.Id).ThenByDescending(t => t.Id)).GetGenericMethodDefinition();
+    public static IEnumerable ThenBy(IEnumerable collection, LambdaExpression lambda, OrderType orderType)
+    {
+        var mi = orderType == OrderType.Ascending ? giThenByE : giThenByDescendingE;
+
+        return mi.GetInvoker(lambda.Type.GetGenericArguments())(collection, lambda.Compile());
+    }
     public static IOrderedQueryable ThenBy(IOrderedQueryable query, LambdaExpression lambda, OrderType orderType)
     {
         MethodInfo mi = (orderType == OrderType.Ascending ? miThenByQ : miThenByDescendingQ).MakeGenericMethod(lambda.Type.GetGenericArguments());

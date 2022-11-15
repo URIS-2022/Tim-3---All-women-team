@@ -57,7 +57,6 @@ public class ExpressionContainer
 
     public IEnumerable<QueryToken> GetExtensionsTokens(QueryToken parent)
     {
-        var parentTypeClean = parent.Type.CleanType();
 
         var compatibleTypes = CompatibleTypes(parent.Type);
 
