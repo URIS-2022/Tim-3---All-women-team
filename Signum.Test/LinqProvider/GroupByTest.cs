@@ -336,6 +336,7 @@ public class GroupByTest
     public void SumSimplification()
     {
         var songsAlbum = Database.Query<BandEntity>().Select(a => new { a.Name, Sum = a.Members.Sum(m => m.Name.Length) }).Select(a => a.Name).ToList();
+        Assert.NotNull(songsAlbum);
     }
 
     [Fact]

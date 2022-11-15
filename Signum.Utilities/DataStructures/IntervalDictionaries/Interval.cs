@@ -113,7 +113,7 @@ public struct Interval<T> : IEquatable<Interval<T>>, IComparable<Interval<T>>, I
     {
         if (format == null)
             return string.Format(formatProvider, "{0} - {1}", min, max);
-        else if (format.Contains("{"))
+        else if (format.Contains('{'))
             return string.Format(formatProvider, format, min, max);
         else
             return string.Format(formatProvider, "{0:" + format + "} - {1:" + format + "}", min, max);
