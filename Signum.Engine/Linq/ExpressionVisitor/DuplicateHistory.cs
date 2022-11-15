@@ -8,7 +8,7 @@ namespace Signum.Engine.Linq;
 /// </summary>
 internal class DuplicateHistory : DbExpressionVisitor
 {
-    private AliasGenerator aliasGenerator;
+    readonly private AliasGenerator aliasGenerator;
 
     public DuplicateHistory(AliasGenerator generator)
     {
@@ -97,7 +97,6 @@ internal class DuplicateHistory : DbExpressionVisitor
 
     protected internal override Expression VisitSelect(SelectExpression select)
     {
-        //if (select.SelectRoles == SelectRoles.Where && select.From is TableExpression table && table.SystemTime != null && !(table.SystemTime is SystemTime.HistoryTable))
         //{
         //    var current = (SelectExpression)AliasReplacer.Replace(select, this.aliasGenerator);
         //    var history = (SelectExpression)AliasReplacer.Replace(select, this.aliasGenerator);

@@ -592,7 +592,7 @@ JOIN {tabCol.ReferenceTable.Name} {fkAlias} ON {tabAlias}.{difCol.Name} = {fkAli
         return !object.Equals(name.Schema.Database, name2.Schema.Database);
     }
 
-    public static Func<SchemaName, bool> IgnoreSchema = s => s.Name.Contains("\\");
+    public static Func<SchemaName, bool> IgnoreSchema = s => s.Name.Contains('\\');
 
     private static SqlPreCommand AlterTableAddColumnDefault(SqlBuilder sqlBuilder, ITable table, IColumn column, Replacements rep, string? forceDefaultValue, bool avoidDefault, HashSet<FieldEmbedded.EmbeddedHasValueColumn> hasValueFalse)
     {

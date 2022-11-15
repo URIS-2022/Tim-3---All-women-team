@@ -368,7 +368,7 @@ FOR EACH ROW EXECUTE PROCEDURE versioning(
         var primaryKey = uniqueIndex.Table.Columns.Values.Where(a => a.PrimaryKey).Only();
 
         if (primaryKey == null)
-            throw new InvalidOperationException("No primary key found"); ;
+            throw new InvalidOperationException("No primary key found"); 
 
         var oldTableName = rep.Apply(Replacements.KeyTablesInverse, uniqueIndex.Table.Name.ToString());
 

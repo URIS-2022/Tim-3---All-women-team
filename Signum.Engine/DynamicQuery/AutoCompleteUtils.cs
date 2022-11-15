@@ -166,8 +166,11 @@ public static class AutocompleteUtils
 
     static GenericInvoker<Func<string[], int, List<Lite<Entity>>>> giLiteContaining =
         new((parts, c) => LiteContaining<TypeEntity>(parts, c));
+
+    static GenericInvoker<Func<string[], int, CancellationToken, Task<List<Lite<Entity>>>>> giLiteContainingAsync =
+        new((parts, c, token) => LiteContaining<TypeEntity>(parts, c, token));
     static List<Lite<Entity>> LiteContaining<T>(string[] parts, int count)
-        where T : Entity
+     where T : Entity
     {
         return Database.Query<T>()
             .Where(a => a.ToString().ContainsAllParts(parts))
@@ -178,9 +181,6 @@ public static class AutocompleteUtils
             .Cast<Lite<Entity>>()
             .ToList();
     }
-
-    static GenericInvoker<Func<string[], int, CancellationToken, Task<List<Lite<Entity>>>>> giLiteContainingAsync =
-        new((parts, c, token) => LiteContaining<TypeEntity>(parts, c, token));
     static async Task<List<Lite<Entity>>> LiteContaining<T>(string[] parts, int count, CancellationToken token)
         where T : Entity
     {

@@ -195,7 +195,7 @@ public static class DQueryable
         return SubQueryConstructor(context, tree, out newContext);
     }
 
-    public static MethodInfo miToList = ReflectionTools.GetMethodInfo(() => Enumerable.Empty<int>().ToList()).GetGenericMethodDefinition();
+    public static readonly MethodInfo miToList = ReflectionTools.GetMethodInfo(() => Enumerable.Empty<int>().ToList()).GetGenericMethodDefinition();
 
     static LambdaExpression SubQueryConstructor(BuildExpressionContext context, Node<IGrouping<CollectionElementToken?, QueryToken>> node, out BuildExpressionContext newContext)
     {
@@ -810,6 +810,8 @@ public static class DQueryable
 
     static readonly GenericInvoker<Func<IEnumerable, Delegate, Delegate, IEnumerable>> giGroupByE =
         new((col, ks, rs) => (IEnumerable<object>)Enumerable.GroupBy<string, int, double>((IEnumerable<string>)col, (Func<string, int>)ks, (Func<int, IEnumerable<string>, double>)rs));
+
+    static MethodInfo miGroupByQ = ReflectionTools.GetMethodInfo(() => Queryable.GroupBy<string, int, double>((IQueryable<string>)null!, (Expression<Func<string, int>>)null!, (Expression<Func<int, IEnumerable<string>, double>>)null!)).GetGenericMethodDefinition();
     public static DEnumerable<T> GroupBy<T>(this DEnumerable<T> collection, HashSet<QueryToken> keyTokens, HashSet<AggregateToken> aggregateTokens)
     {
         var rootKeyTokens = GetRootKeyTokens(keyTokens);
@@ -824,8 +826,6 @@ public static class DQueryable
 
         return new DEnumerable<T>(resultCollection, newContext);
     }
-
-    static MethodInfo miGroupByQ = ReflectionTools.GetMethodInfo(() => Queryable.GroupBy<string, int, double>((IQueryable<string>)null!, (Expression<Func<string, int>>)null!, (Expression<Func<int, IEnumerable<string>, double>>)null!)).GetGenericMethodDefinition();
     public static DQueryable<T> GroupBy<T>(this DQueryable<T> query, HashSet<QueryToken> keyTokens, HashSet<AggregateToken> aggregateTokens)
     {
         var rootKeyTokens = GetRootKeyTokens(keyTokens);

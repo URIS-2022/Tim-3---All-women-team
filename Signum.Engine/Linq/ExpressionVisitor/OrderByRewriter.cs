@@ -62,10 +62,9 @@ internal class OrderByRewriter : DbExpressionVisitor
     {
         bool isOuterMost = select == outerMostSelect;
 
-        if (select.IsOrderAlsoByKeys || select.HasIndex || select.Top != null && hasProjectionInProjector)
+        if (select.IsOrderAlsoByKeys || select.HasIndex || select.Top != null && hasProjectionInProjector && gatheredKeys == null)
         {
-            if (gatheredKeys == null)
-                gatheredKeys = new List<ColumnExpression>();
+            gatheredKeys = new List<ColumnExpression>();
         }
 
         List<ColumnExpression>? savedKeys = null;

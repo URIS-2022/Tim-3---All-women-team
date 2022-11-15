@@ -130,7 +130,7 @@ public static class Administrator
         Console.WriteLine("Done.");
     }
 
-    public static Func<bool> AvoidSimpleSynchronize = () => true;
+    public static readonly Func<bool> AvoidSimpleSynchronize = () => true;
 
     public static void Synchronize()
     {
@@ -321,13 +321,6 @@ public static class Administrator
 
 
 
-    public static IDisposable SaveDisableIdentity<T>()
-        where T : Entity
-    {
-        Table table = Schema.Current.Table<T>();
-        return DisableIdentity(table);
-    }
-
     public static IDisposable? DisableIdentity<T, V>(Expression<Func<T, MList<V>>> mListField)
       where T : Entity
     {
@@ -368,6 +361,13 @@ public static class Administrator
     }
 
     static AsyncThreadVariable<ImmutableStack<ITable>?> identityBehaviourDisabled = Statics.ThreadVariable<ImmutableStack<ITable>?>("identityBehaviourOverride");
+
+    public static IDisposable SaveDisableIdentity<T>()
+        where T : Entity
+    {
+        Table table = Schema.Current.Table<T>();
+        return DisableIdentity(table);
+    }
 
     public static T SaveDisableIdentity<T>(T entity)
         where T : Entity

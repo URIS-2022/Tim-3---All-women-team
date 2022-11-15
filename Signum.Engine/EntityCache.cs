@@ -128,17 +128,16 @@ public class EntityCache: IDisposable
         foreach (var item in objects)
             Add(item);
     }
-
-    public static void Add<T>(IEnumerable<T> objects)
-        where T: Entity
-    {
-        foreach (var item in objects)
-            Add(item);
-    }
-
     public static void AddFullGraph(ModifiableEntity ie)
     {
         Current.AddFullGraph(ie);
+    }
+
+    public static void Add<T>(IEnumerable<T> objects)
+     where T : Entity
+    {
+        foreach (var item in objects)
+            Add(item);
     }
 
     public static void Add(Entity ie)

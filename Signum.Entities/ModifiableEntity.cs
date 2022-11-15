@@ -630,7 +630,7 @@ public class NicePropertyNameExpander : IMethodExpander
 {
     public Expression Expand(Expression? instance, Expression[] arguments, MethodInfo mi)
     {
-        var lambda = (LambdaExpression)arguments[0].StripQuotes();
+        var lambda = arguments[0].StripQuotes();
 
         var niceName = ReflectionTools.BasePropertyInfo(lambda).NiceName();
 

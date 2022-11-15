@@ -130,11 +130,11 @@ internal class ConditionsRewriter: DbExpressionVisitor
         };
     }
 
-    protected override Expression VisitUnary(UnaryExpression u)
+    protected override Expression VisitUnary(UnaryExpression node)
     {
-        if (u.NodeType == ExpressionType.Not)
+        if (node.NodeType == ExpressionType.Not)
         {
-            var op = this.Visit(u.Operand);
+            var op = this.Visit(node.Operand);
 
             if (IsTrue(op))
                 return FalseCondition;
@@ -143,12 +143,12 @@ internal class ConditionsRewriter: DbExpressionVisitor
                 return TrueCondition;
 
             Expression operand = MakeSqlCondition(op);
-            if (operand != u.Operand)
+            if (operand != node.Operand)
             {
                 return Expression.Not(operand);
             }
         }
-        return base.VisitUnary(u);
+        return base.VisitUnary(node);
     }
 
     protected internal override Expression VisitSqlCast(SqlCastExpression castExpr)
