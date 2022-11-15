@@ -417,7 +417,7 @@ public class Replacements : Dictionary<string, Dictionary<string, string>>
 
         while (true)
         {
-            //var key = replacementsKey + "." + oldValue;
+            
             //string? answer = cases!.ContainsKey(key) ? cases[key].NewValue:  Console.ReadLine();
 
             string answer =  Console.ReadLine()!;

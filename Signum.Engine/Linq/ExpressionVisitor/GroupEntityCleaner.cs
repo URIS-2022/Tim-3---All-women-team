@@ -60,7 +60,7 @@ internal class GroupEntityCleaner : DbExpressionVisitor
 
     protected override Expression VisitConditional(ConditionalExpression node)
     {
-        if (node.IfTrue.Type.IsLite() || node.IfTrue.Type.IsLite())
+        if (node.IfTrue.Type.IsLite())
             return this.Visit(new LiteReferenceExpression(node.Type,
                 Expression.Condition(node.Test, GetLiteEntity(node.IfTrue), GetLiteEntity(node.IfFalse)), null, null, false, false));
 

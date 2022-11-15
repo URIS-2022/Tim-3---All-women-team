@@ -16,12 +16,14 @@ public class DistinctTest
     public void DistinctString()
     {
         var authors = Database.Query<AlbumEntity>().Select(a => a.Label.Name).Distinct().ToList();
+        Assert.NotNull(authors);
     }
 
     [Fact]
     public void DistinctPair()
     {
         var authors = Database.Query<ArtistEntity>().Select(a =>new {a.Sex, a.Dead}).Distinct().ToList();
+        Assert.NotNull(authors);
     }
 
     [Fact]

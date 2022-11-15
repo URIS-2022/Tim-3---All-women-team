@@ -7,7 +7,7 @@ public static class SqlServerRetry
     public static int MaxRetryCount = 6;
 
     ///  must not be lesser than 1.
-    public static double DefaultRandomFactor = 1.1;
+    public const double DefaultRandomFactor = 1.1;
 
     ///  must be positive.
     public static double DefaultExponentialBase = 2;

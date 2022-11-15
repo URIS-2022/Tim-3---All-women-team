@@ -438,7 +438,7 @@ public partial class Table
 
                     var forbidden = new Forbidden(graph, ident);
 
-                    int num = (int)new SqlPreCommandSimple(sqlUpdate, new List<DbParameter>().Do(ps => UpdateParameters(ident, -1, forbidden, "", ps))).ExecuteNonQuery();
+                    int num = new SqlPreCommandSimple(sqlUpdate, new List<DbParameter>().Do(ps => UpdateParameters(ident, -1, forbidden, "", ps))).ExecuteNonQuery();
                     if (num != 1)
                         throw new EntityNotFoundException(ident.GetType(), ident.Id);
                 };

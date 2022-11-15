@@ -319,7 +319,7 @@ public class Graph<T, S>
         protected override void OnDelete(T entity, object?[]? args)
         {
             AssertGetState();
-            S oldState = Graph<T, S>.GetStateFunc(entity);
+            
 
             base.OnDelete(entity, args);
         }

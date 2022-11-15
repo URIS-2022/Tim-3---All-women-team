@@ -360,7 +360,7 @@ public class PropertyRoute : IEquatable<PropertyRoute>, ISerializable
 
         Sequence<string> splitDot(string text)
         {
-            if (text.Contains("."))
+            if (text.Contains('.'))
                 return new Sequence<string>
                 {
                     splitMixin(text.Before(".")),

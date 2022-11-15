@@ -35,7 +35,7 @@ public class OperationToken : QueryToken
         return operation.NiceToString();
     }
 
-    public override Type Type { get { return typeof(CellOperationDTO); } }
+    public override Type Type { get { return typeof(CellOperationDto); } }
 
     string key;
     public override string Key { get { return key; } }
@@ -96,9 +96,9 @@ public class OperationToken : QueryToken
 
 }
 
-public class CellOperationDTO
+public class CellOperationDto
 {
-    public CellOperationDTO(Lite<IEntity> lite, string operationKey, string? canExecute)
+    public CellOperationDto(Lite<IEntity> lite, string operationKey, string? canExecute)
     {
         Lite = lite;
         OperationKey = operationKey;

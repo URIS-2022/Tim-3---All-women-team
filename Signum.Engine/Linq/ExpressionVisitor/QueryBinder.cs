@@ -2863,7 +2863,7 @@ internal class QueryBinder : ExpressionVisitor
                     );
                 }).ToReadOnly()
             );
-            List<Expression> equals = new List<Expression>();
+            
             foreach (var unionEntity in result.Implementations.Values)
             {
                 ColumnExpression expression = result.AddIndependentColumn(

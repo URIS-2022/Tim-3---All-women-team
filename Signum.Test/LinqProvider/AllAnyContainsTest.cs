@@ -26,6 +26,7 @@ public class AllAnyContainsTest
         List<PrimaryKey> ids = new List<PrimaryKey> { 1, 2, 3 };
 
         var artist = Database.Query<ArtistEntity>().Where(a => ids.Contains(a.Id)).ToList();
+        Assert.NotEmpty(ids);
     }
 
     [Fact]
@@ -64,6 +65,7 @@ public class AllAnyContainsTest
         var albums = (from a in Database.Query<AlbumEntity>()
                       where !bands.Contains(a.Author.ToLite())
                       select a.ToLite()).ToList();
+        Assert.NotNull(albums);
     }
 
     [Fact]
@@ -89,6 +91,8 @@ public class AllAnyContainsTest
         var albums = (from a in Database.Query<NoteWithDateEntity>()
                       where lites.Contains(a.Target.ToLite())
                       select a.ToLite()).ToList();
+
+        Assert.NotNull(albums);
     }
 
     [Fact]
@@ -159,12 +163,14 @@ public class AllAnyContainsTest
     public void All()
     {
         Assert.False(Database.Query<ArtistEntity>().All(a => a.Sex == Sex.Male));
+       
     }
 
     [Fact]
     public void AllSql()
     {
         BandEntity sigur = Database.Query<BandEntity>().SingleEx(b => b.Members.All(a => a.Sex == Sex.Male));
+        Assert.NotNull(sigur);
     }
 
     [Fact]

@@ -263,7 +263,7 @@ public abstract class ModifiableEntity : Modifiable, IModifiableEntity, ICloneab
 
     public void NotifyError()
     {
-        NotifyPrivate("Error");
+        NotifyPrivate(nameof(Error));
     }
 
  

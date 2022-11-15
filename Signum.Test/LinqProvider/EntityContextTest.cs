@@ -16,6 +16,7 @@ public class EntityContextTest
     public void EntityIdMember()
     {
         var authors = Database.Query<AlbumEntity>().Count(a => EntityContext.EntityId(a.Label) == a.Id);
+        Assert.NotNull(authors);
     }
 
     [Fact]
