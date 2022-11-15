@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using Signum.Utilities.ExpressionTrees;
 using System.IO;
+using System.Reflection;
 
 namespace Signum.Utilities.Reflection;
 
@@ -759,7 +760,7 @@ public static class ReflectionTools
         if (value == null)
             return null;
 
-        if (type.IsAssignableFrom(value.GetType()))
+        if (type.IsInstanceOfType(value.GetType()))
             return value;
         else
         {

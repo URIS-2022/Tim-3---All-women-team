@@ -63,7 +63,7 @@ public static class DeletePart
     {
         fi.SchemaBuilder.Schema.EntityEvents<T>().PreUnsafeDelete += query =>
         {
-            var toDelete = query.Select(relatedEntity).ToList().NotNull().Distinct().ToList();;
+            var toDelete = query.Select(relatedEntity).ToList().NotNull().Distinct().ToList();
             return new Disposable(() =>
             {
                 Database.DeleteList(toDelete);

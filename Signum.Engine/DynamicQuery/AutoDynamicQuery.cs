@@ -93,7 +93,7 @@ public class AutoDynamicQueryCore<T> : DynamicQueryCore<T>
 
     private DQueryable<T> GetDQueryable(QueryRequest request, out List<Order>? inMemoryOrders)
     {
-        if (!request.Columns.Where(c => c is _EntityColumn).Any())
+        if (!request.Columns.Any(c => c is _EntityColumn))
             request.Columns.Insert(0, new _EntityColumn(EntityColumnFactory().BuildColumnDescription(), QueryName));
 
         if (request.MultiplicationsInSubQueries())

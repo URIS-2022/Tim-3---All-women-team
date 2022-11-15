@@ -313,28 +313,28 @@ internal class DbExpressionNominator : DbExpressionVisitor
         return castExpr;
     }
 
-    protected internal override Expression VisitSqlConstant(SqlConstantExpression sqlConstant)
+    protected internal override Expression VisitSqlConstant(SqlConstantExpression sce)
     {
         if (!innerProjection)
         {
-            if (sqlConstant.Type.UnNullify() == typeof(PrimaryKey))
+            if (sce.Type.UnNullify() == typeof(PrimaryKey))
             {
                 if (isFullNominate)
                 {
-                    if (sqlConstant.Value == null)
+                    if (sce.Value == null)
                         return Add(new SqlConstantExpression(null, typeof(object)));
                     else
-                        return Add(new SqlConstantExpression(((PrimaryKey)sqlConstant.Value).Object));
+                        return Add(new SqlConstantExpression(((PrimaryKey)sce.Value).Object));
                 }
                 else
                 {
-                    return sqlConstant;
+                    return sce;
                 }
             }
 
-            return Add(sqlConstant);
+            return Add(sce);
         }
-        return sqlConstant;
+        return sce;
     }
 
     protected internal override Expression VisitSqlVariable(SqlVariableExpression sve)
@@ -1499,7 +1499,7 @@ internal class DbExpressionNominator : DbExpressionVisitor
                 {
                     if (arg is ConstantExpression c)
                         arg = Expression.Constant(c.Value);
-                    if (arg is UnaryExpression u && (u.NodeType == ExpressionType.Convert || u.NodeType == ExpressionType.Convert))
+                    if (arg is UnaryExpression u && u.NodeType == ExpressionType.Convert )
                         arg = u.Operand;
                 }
 

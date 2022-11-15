@@ -109,7 +109,7 @@ class SelectRowRemover : DbExpressionVisitor
 
     protected internal override Expression VisitDelete(DeleteExpression delete)
     {
-        if (delete.ReturnRowCount == false)
+        if (!delete.ReturnRowCount)
             return delete;
 
         return new DeleteExpression(delete.Table, delete.UseHistoryTable, delete.Source, delete.Where, returnRowCount: false, alias: null);
