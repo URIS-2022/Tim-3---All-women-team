@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Xml.Linq;
+using System.Linq;
 
 namespace Signum.Utilities.DataStructures;
 
@@ -203,9 +204,12 @@ public class DirectedEdgedGraph<T, E> : IEnumerable<T>
 
     void IndirectlyRelatedTo(T node, HashSet<T> set)
     {
-        foreach (var item in RelatedTo(node))
-            if (set.Add(item.Key))
-                IndirectlyRelatedTo(item.Key, set);
+        foreach (var item in from item in RelatedTo(node)
+                             where set.Add(item.Key)
+                             select item)
+        {
+            IndirectlyRelatedTo(item.Key, set);
+        }
     }
 
     public HashSet<T> IndirectlyRelatedTo(T node, Func<KeyValuePair<T, E>, bool> condition)
@@ -237,10 +241,9 @@ public class DirectedEdgedGraph<T, E> : IEnumerable<T>
 
     public void DepthExploreConnections(T node, Func<T, E, T, bool> condition)
     {
-        foreach (var kvp in RelatedTo(node))
+        foreach (var kvp in RelatedTo(node).Where(kvp => condition(node, kvp.Value, kvp.Key)))
         {
-            if (condition(node, kvp.Value, kvp.Key))
-                DepthExploreConnections(kvp.Key, condition);
+            DepthExploreConnections(kvp.Key, condition);
         }
     }
 
@@ -484,7 +487,7 @@ public class DirectedEdgedGraph<T, E> : IEnumerable<T>
             }
 
             var sources = inv.Sinks();
-            if (sources.Count() != 0)
+            if (sources.Any())
             {
                 foreach (var source in sources)
                 {

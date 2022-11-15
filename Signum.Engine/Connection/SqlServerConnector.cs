@@ -405,9 +405,9 @@ public class SqlServerConnector : Connector
         ((SqlTransaction)transaction).Save(savePointName);
     }
 
-    public override void RollbackTransactionPoint(DbTransaction transaction, string savePointName)
+    public override void RollbackTransactionPoint(DbTransaction Transaction, string savePointName)
     {
-        ((SqlTransaction)transaction).Rollback(savePointName);
+        ((SqlTransaction)Transaction).Rollback(savePointName);
     }
 
     public override string GetSqlDbType(DbParameter p)
@@ -457,16 +457,16 @@ public class SqlServerConnector : Connector
 
     public override bool AllowsSetSnapshotIsolation => this.Version >= SqlServerVersion.SqlServer2008;
 
-    public override bool AllowsIndexWithWhere(string Where)
+    public override bool AllowsIndexWithWhere(string where)
     {
-        return Version > SqlServerVersion.SqlServer2005 && !ComplexWhereKeywords.Any(Where.Contains);
+        return Version > SqlServerVersion.SqlServer2005 && !ComplexWhereKeywords.Any(where.Contains);
     }
 
     public override bool RequiresRetry => this.Version == SqlServerVersion.AzureSQL;
 
     public override bool SupportsDateDifBig => this.Version >= SqlServerVersion.SqlServer2016;
 
-    public static List<string> ComplexWhereKeywords = new() { "OR" };
+    protected static List<string> ComplexWhereKeywords = new() { "OR" };
 
     public SqlPreCommand ShrinkDatabase(string databaseName)
     {
@@ -534,10 +534,9 @@ public class SqlParameterBuilder : ParameterBuilder
             else if (value is DateOnly d)
                 value = d.ToDateTime();
         }
-        else if (dbType.IsTime())
+        else if (dbType.IsTime() && value is TimeOnly to)
         {
-            if (value is TimeOnly to)
-                value = to.ToTimeSpan();
+            value = to.ToTimeSpan();
         }
 
         var result = new SqlParameter(parameterName, value ?? DBNull.Value)
@@ -554,14 +553,24 @@ public class SqlParameterBuilder : ParameterBuilder
 
     public override MemberInitExpression ParameterFactory(Expression parameterName, AbstractDbType dbType, int? size, byte? precision, byte? scale, string? udtTypeName, bool nullable, Expression value)
     {
+        var exp=value;
         var uType = value.Type.UnNullify();
 
-        var exp =
-            uType == typeof(DateTime) ? Expression.Call(miAsserDateTime, Expression.Convert(value, typeof(DateTime?))) :
-            //https://github.com/dotnet/SqlClient/issues/1009
-            uType == typeof(DateOnly) ? Expression.Call(miToDateTimeKind, Expression.Convert(value, typeof(DateOnly)), Expression.Constant(Schema.Current.DateTimeKind)) :
-            uType == typeof(TimeOnly) ? Expression.Call(Expression.Convert(value, typeof(TimeOnly)), miToTimeSpan) :
-            value;
+        
+        if (uType == typeof(DateTime))
+        {
+            exp = Expression.Call(miAsserDateTime, Expression.Convert(value, typeof(DateTime?)));
+        
+
+}
+        else if (uType == typeof(DateOnly))
+        {
+            exp = Expression.Call(miToDateTimeKind, Expression.Convert(value, typeof(DateOnly)), Expression.Constant(Schema.Current.DateTimeKind));
+        }
+        else
+        {
+            exp = uType == typeof(TimeOnly) ? Expression.Call(Expression.Convert(value, typeof(TimeOnly)), miToTimeSpan) : value;
+        }
 
         Expression valueExpr = Expression.Convert(exp, typeof(object));
 
