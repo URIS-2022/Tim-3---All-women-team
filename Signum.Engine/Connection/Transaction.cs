@@ -258,6 +258,7 @@ public class Transaction : IDisposableException
 
         public void Commit()
         {
+            // there will be more working on this method
         }
 
         public void CallPostRealCommit()
@@ -271,9 +272,12 @@ public class Transaction : IDisposableException
                     parent.PostRealCommit += parentUserData => item(this.UserData);
         }
 
-        public void Finish() { }
+        public void Finish()
+        { 
+            // there will be more working on this method
+        }
 
-        Dictionary<string, object>? userData;
+            Dictionary<string, object>? userData;
         public Dictionary<string, object> UserData
         {
             get { return userData ?? (userData = new Dictionary<string, object>()); }

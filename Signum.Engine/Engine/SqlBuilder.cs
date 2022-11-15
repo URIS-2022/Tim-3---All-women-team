@@ -284,7 +284,7 @@ FOR EACH ROW EXECUTE PROCEDURE versioning(
 
     public string Quote(AbstractDbType type, string @default)
     {
-        if (type.IsString() && !(@default.StartsWith("'") && @default.StartsWith("'")))
+        if (type.IsString() && !(@default.StartsWith("'")))
             return "'" + @default + "'";
 
         return @default;

@@ -1314,7 +1314,6 @@ internal class DbExpressionNominator : DbExpressionVisitor
         if (expression.IsNull())
             return Add(Expression.Constant(false));
 
-        //pattern = ExpressionEvaluator.PartialEval(pattern);
         Expression newPattern = Visit(pattern);
         Expression newExpression = Visit(expression);
 

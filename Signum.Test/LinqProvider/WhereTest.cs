@@ -18,6 +18,8 @@ public class WhereTest
     public void Where()
     {
         var list = Database.Query<AlbumEntity>().Where(a => a.Year < 1995).ToList();
+
+        Assert.NotEmpty(list);
     }
 
     [Fact]
@@ -28,18 +30,24 @@ public class WhereTest
         var list = (from a in Database.Query<ArtistEntity>()
                     where a.Sex.IsDefined()
                     select a).ToList();
+
+        Assert.NotEmpty(list);
     }
 
     [Fact]
     public void WhereIndex()
     {
         var list = Database.Query<AlbumEntity>().Where((a, i) => i % 2 == 0).ToList();
+
+        Assert.NotEmpty(list);
     }
 
     [Fact]
     public void WhereExplicitConvert()
     {
         var list = Database.Query<AlbumEntity>().Where(a => a.Id.ToString() == "1").ToList();
+
+        Assert.NotEmpty(list);
     }
 
     [Fact]
@@ -63,18 +71,24 @@ public class WhereTest
     public void WhereSelect()
     {
         var list = Database.Query<AlbumEntity>().Where(a => a.Year < 1995).Select(a => new { a.Year, Author = a.Author.ToLite(), a.Name }).ToList();
+
+        Assert.NotEmpty(list);
     }
 
     [Fact]
     public void WhereBool()
     {
         var list = Database.Query<ArtistEntity>().Where(a => a.Dead).ToList();
+
+        Assert.NotEmpty(list);
     }
 
     [Fact]
     public void WhereNotNull()
     {
         var list = Database.Query<ArtistEntity>().Where(a => a.LastAward != null).ToList();
+
+        Assert.NotEmpty(list);
     }
 
     [Fact]
@@ -221,18 +235,24 @@ public class WhereTest
         var list = (from a in Database.Query<ArtistEntity>()
                     where a.Dead ? a.Name.Contains("Michael") : a.Name.Contains("Billy")
                     select a).ToArray();
+
+        Assert.NotEmpty(list);
     }
 
     [Fact]
     public void WherePolyExpressionMethodUnion()
     {
         var list = Database.Query<AlbumEntity>().Where(a => a.Author.CombineUnion().Lonely()).ToArray();
+
+        Assert.NotEmpty(list);
     }
 
     [Fact]
     public void WherePolyExpressionMethodSwitch()
     {
         var list = Database.Query<AlbumEntity>().Where(a => a.Author.CombineCase().Lonely()).ToArray();
+
+        Assert.NotEmpty(list);
     }
 
 

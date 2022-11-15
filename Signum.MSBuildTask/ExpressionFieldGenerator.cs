@@ -168,7 +168,7 @@ internal class ExpressionFieldGenerator
         {
             if (closureType != null && v.VariableType == closureType)
             {
-
+                //this if block should not be empty
             }
             else
             {

@@ -464,7 +464,7 @@ public static class SchemaSynchronizer
                     var controlledIndexes = Synchronizer.SynchronizeScript(Spacing.Simple,
                         modelIxs.Where(kvp => kvp.Value.GetType() == typeof(TableIndex)).ToDictionary(),
                         dif.Indices.Where(kvp => !kvp.Value.IsPrimary).ToDictionary(),
-                        createNew: (i, mix) => mix is UniqueTableIndex || mix.Columns.Any(isNew) || (replacements.Interactive ? SafeConsole.Ask(ref createMissingFreeIndexes, "Create missing non-unique index {0} in {1}?".FormatWith(mix.IndexName, tab.Name)) : true) ? sqlBuilder.CreateIndexBasic(mix, forHistoryTable: true) : null,
+                        createNew: (i, mix) => mix is UniqueTableIndex || mix.Columns.Any(isNew) || (replacements.Interactive && SafeConsole.Ask(ref createMissingFreeIndexes, "Create missing non-unique index {0} in {1}?".FormatWith(mix.IndexName, tab.Name))) ? sqlBuilder.CreateIndexBasic(mix, forHistoryTable: true) : null,
                         removeOld: null,
                         mergeBoth: (i, mix, dix) => {
                             if (!dix.IndexEquals(dif, mix)) 

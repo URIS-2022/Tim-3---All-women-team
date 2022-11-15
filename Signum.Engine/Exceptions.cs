@@ -8,7 +8,7 @@ using Signum.Entities.Basics;
 
 namespace Signum.Engine;
 
-public class UniqueKeyException : ApplicationException
+public class IUniqueKeyException : ApplicationException
 {
     public string? TableName { get; private set; }
     public Table? Table { get; private set; }
@@ -20,7 +20,7 @@ public class UniqueKeyException : ApplicationException
     public string? Values { get; private set; }
     public object?[]? HumanValues { get; private set; }
 
-    protected UniqueKeyException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+    protected IUniqueKeyException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 
     static Regex[] regexes = new[]
     {
@@ -28,7 +28,7 @@ public class UniqueKeyException : ApplicationException
             new Regex(@"Eine Zeile mit doppeltem Schlüssel kann in das Objekt ""(?<table>.*)"" mit dem eindeutigen Index ""(?<index>.*)"" nicht eingefügt werden. Der doppelte Schlüsselwert ist \((?<value>.*)\)")
         };
 
-    public UniqueKeyException(Exception inner) : base(null, inner)
+    public IUniqueKeyException(Exception inner) : base(null, inner)
     {
         foreach (var rx in regexes)
         {
@@ -196,7 +196,7 @@ public class UniqueKeyException : ApplicationException
 }
 
 
-public class ForeignKeyException : ApplicationException
+public class IForeignKeyException : ApplicationException
 {
     public string? TableName { get; private set; }
     public Type? TableType { get; private set; }
@@ -213,9 +213,9 @@ public class ForeignKeyException : ApplicationException
 
     static Regex referedTable = new Regex(@"table ""(?<referedTable>.+?)""");
 
-    protected ForeignKeyException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+    protected IForeignKeyException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 
-    public ForeignKeyException(Exception inner) : base(null, inner)
+    public IForeignKeyException(Exception inner) : base(null, inner)
     {
         Match m = indexRegex.Match(inner.Message);
 

@@ -20,8 +20,6 @@ public static class PostgresCatalogSchema
 
             using (Administrator.OverrideDatabaseInSysViews(db))
             {
-                var databaseName = db == null ? Connector.Current.DatabaseName() : db.Name;
-
                 var tables =
                     (from ns in Database.View<PgNamespace>()
                      where !ns.IsInternal()
