@@ -255,7 +255,7 @@ public static class DictionaryExtensions
                 throw new InvalidOperationException("Error {0}\r\n Extra: {1}".FormatWith(errorContext, currentOnly.ToString(", ")));
         else
             if (shouldOnly.Count != 0)
-            throw new InvalidOperationException("Error {0}\r\n Missing: {1}".FormatWith(errorContext, shouldOnly.ToString(", ")));
+                throw new InvalidOperationException("Error {0}\r\n Missing: {1}".FormatWith(errorContext, shouldOnly.ToString(", ")));
 
         return currentDictionary.ToDictionaryEx(kvp => kvp.Key, kvp => resultSelector(kvp.Value, shouldDictionary[kvp.Key]));
     }

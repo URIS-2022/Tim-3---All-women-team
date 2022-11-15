@@ -130,7 +130,7 @@ public static class Administrator
         Console.WriteLine("Done.");
     }
 
-    public static Func<bool> AvoidSimpleSynchronize = () => true;
+    public static readonly Func<bool> AvoidSimpleSynchronize = () => true;
 
     public static void Synchronize()
     {
@@ -321,13 +321,6 @@ public static class Administrator
 
 
 
-    public static IDisposable SaveDisableIdentity<T>()
-        where T : Entity
-    {
-        Table table = Schema.Current.Table<T>();
-        return DisableIdentity(table);
-    }
-
     public static IDisposable? DisableIdentity<T, V>(Expression<Func<T, MList<V>>> mListField)
       where T : Entity
     {
@@ -335,18 +328,6 @@ public static class Administrator
         return DisableIdentity(table);
     }
 
-    public static bool IsIdentityBehaviourDisabled(ITable table)
-    {
-        return identityBehaviourDisabled.Value?.Contains(table) == true;
-    }
-
-    [DebuggerStepThrough]
-    public static IQueryable<T> QueryDisableAssertAllowed<T>() where T : Entity
-    {
-        return new SignumTable<T>(DbQueryProvider.Single, Schema.Current.Table<T>(), disableAssertAllowed: true);
-    }
-
-    static AsyncThreadVariable<ImmutableStack<ITable>?> identityBehaviourDisabled = Statics.ThreadVariable<ImmutableStack<ITable>?>("identityBehaviourOverride");
     public static IDisposable DisableIdentity(ITable table, bool behaviourOnly = false)
     {
         if (!table.IdentityBehaviour)
@@ -366,6 +347,26 @@ public static class Administrator
             if (table.PrimaryKey.Default == null && !sqlBuilder.IsPostgres && !behaviourOnly)
                 sqlBuilder.SetIdentityInsert(table.Name, false).ExecuteNonQuery();
         });
+    }
+
+    public static bool IsIdentityBehaviourDisabled(ITable table)
+    {
+        return identityBehaviourDisabled.Value?.Contains(table) == true;
+    }
+
+    [DebuggerStepThrough]
+    public static IQueryable<T> QueryDisableAssertAllowed<T>() where T : Entity
+    {
+        return new SignumTable<T>(DbQueryProvider.Single, Schema.Current.Table<T>(), disableAssertAllowed: true);
+    }
+
+    static AsyncThreadVariable<ImmutableStack<ITable>?> identityBehaviourDisabled = Statics.ThreadVariable<ImmutableStack<ITable>?>("identityBehaviourOverride");
+
+    public static IDisposable SaveDisableIdentity<T>()
+        where T : Entity
+    {
+        Table table = Schema.Current.Table<T>();
+        return DisableIdentity(table);
     }
 
     public static T SaveDisableIdentity<T>(T entity)

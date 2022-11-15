@@ -169,7 +169,7 @@ public static class SysTablesSchema
         {
             using (Administrator.OverrideDatabaseInSysViews(db))
             {
-                var schemaNames = Database.View<SysSchemas>().Select(s => s.name).ToList().Except(sqlBuilder.SystemSchemas);
+                var schemaNames = Database.View<SysSchemas>().Select(s => s.name).AsEnumerable().Except(sqlBuilder.SystemSchemas);
 
                 result.AddRange(schemaNames.Select(sn => new SchemaName(db, sn, isPostgres)).Where(a => !SchemaSynchronizer.IgnoreSchema(a)));
             }

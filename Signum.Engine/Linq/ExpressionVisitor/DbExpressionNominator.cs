@@ -235,36 +235,36 @@ internal class DbExpressionNominator : DbExpressionVisitor
             return base.VisitNew(nex);
     }
 
-    protected override Expression VisitConstant(ConstantExpression c)
+    protected override Expression VisitConstant(ConstantExpression node)
     {
-        Type ut = c.Type.UnNullify();
+        Type ut = node.Type.UnNullify();
         if (ut == typeof(PrimaryKey) && isFullNominate)
         {
-            if (c.Value == null)
+            if (node.Value == null)
                 return Add(Expression.Constant(null, typeof(object)));
             else
-                return Add(Expression.Constant(((PrimaryKey)c.Value).Object));
+                return Add(Expression.Constant(((PrimaryKey)node.Value).Object));
         }
 
         if (!innerProjection && IsFullNominateOrAggresive)
         {
             if (ut == typeof(DayOfWeek))
             {
-                var dayNumber = c.Value == null ? (int?)null :
-                    isPostgres ? (int)(DayOfWeek)c.Value :
-                    ToDayOfWeekExpression.ToSqlWeekDay((DayOfWeek)c.Value, ((SqlServerConnector)Connector.Current).DateFirst);
+                var dayNumber = node.Value == null ? (int?)null :
+                    isPostgres ? (int)(DayOfWeek)node.Value :
+                    ToDayOfWeekExpression.ToSqlWeekDay((DayOfWeek)node.Value, ((SqlServerConnector)Connector.Current).DateFirst);
 
                 return new ToDayOfWeekExpression(Add(Expression.Constant(dayNumber, typeof(int?))));
             }
 
             if (Schema.Current.Settings.IsDbType(ut))
-                return Add(c);
+                return Add(node);
 
-            if (c.Type == typeof(object) && (c.IsNull() || (Schema.Current.Settings.IsDbType(c.Value!.GetType()))))
-                return Add(c);
+            if (node.Type == typeof(object) && (node.IsNull() || (Schema.Current.Settings.IsDbType(node.Value!.GetType()))))
+                return Add(node);
         }
 
-        return c;
+        return node;
     }
 
 
@@ -274,7 +274,7 @@ internal class DbExpressionNominator : DbExpressionVisitor
         Expression? obj = Visit(sqlFunction.Object);
         ReadOnlyCollection<Expression> args = Visit(sqlFunction.Arguments);
         if (args != sqlFunction.Arguments || obj != sqlFunction.Object)
-            sqlFunction = new SqlFunctionExpression(sqlFunction.Type, obj, sqlFunction.SqlFunction, args); ;
+            sqlFunction = new SqlFunctionExpression(sqlFunction.Type, obj, sqlFunction.SqlFunction, args); 
 
         if (args.All(Has) && (obj == null || Has(obj)))
             return Add(sqlFunction);
@@ -286,7 +286,7 @@ internal class DbExpressionNominator : DbExpressionVisitor
     {
         ReadOnlyCollection<Expression> args = Visit(sqlFunction.Arguments, a => Visit(a));
         if (args != sqlFunction.Arguments)
-            sqlFunction = new SqlTableValuedFunctionExpression(sqlFunction.SqlFunction, sqlFunction.ViewTable, sqlFunction.SingleColumnType, sqlFunction.Alias, args); ;
+            sqlFunction = new SqlTableValuedFunctionExpression(sqlFunction.SqlFunction, sqlFunction.ViewTable, sqlFunction.SingleColumnType, sqlFunction.Alias, args); 
 
         if (args.All(Has))
             return Add(sqlFunction);
@@ -313,28 +313,28 @@ internal class DbExpressionNominator : DbExpressionVisitor
         return castExpr;
     }
 
-    protected internal override Expression VisitSqlConstant(SqlConstantExpression sqlConstant)
+    protected internal override Expression VisitSqlConstant(SqlConstantExpression sce)
     {
         if (!innerProjection)
         {
-            if (sqlConstant.Type.UnNullify() == typeof(PrimaryKey))
+            if (sce.Type.UnNullify() == typeof(PrimaryKey))
             {
                 if (isFullNominate)
                 {
-                    if (sqlConstant.Value == null)
+                    if (sce.Value == null)
                         return Add(new SqlConstantExpression(null, typeof(object)));
                     else
-                        return Add(new SqlConstantExpression(((PrimaryKey)sqlConstant.Value).Object));
+                        return Add(new SqlConstantExpression(((PrimaryKey)sce.Value).Object));
                 }
                 else
                 {
-                    return sqlConstant;
+                    return sce;
                 }
             }
 
-            return Add(sqlConstant);
+            return Add(sce);
         }
-        return sqlConstant;
+        return sce;
     }
 
     protected internal override Expression VisitSqlVariable(SqlVariableExpression sve)
@@ -498,7 +498,7 @@ internal class DbExpressionNominator : DbExpressionVisitor
 
         return Add(new SqlFunctionExpression(type, newObj, sqlFunction, newExpressions));
     }
-
+    static int DaysBetween(DateOnly a, DateOnly b) => a.DayNumber - b.DayNumber;
     private Expression? TrySqlDifference(SqlEnums unit, Type type, Expression expression)
     {
         if (innerProjection)
@@ -515,7 +515,7 @@ internal class DbExpressionNominator : DbExpressionVisitor
         return null;
     }
 
-    static int DaysBetween(DateOnly a, DateOnly b) => a.DayNumber - b.DayNumber;
+   
 
     private Expression? TrySqlDifference(SqlEnums unit, Type type, Expression leftSide, Expression rightSide)
     {
@@ -1090,7 +1090,6 @@ internal class DbExpressionNominator : DbExpressionVisitor
         throw new InvalidOperationException();
     }
 
-    static readonly MethodInfo miSimpleConcat = ReflectionTools.GetMethodInfo(() => string.Concat("a", "b"));
 
 
     protected override Expression VisitConditional(ConditionalExpression c)
@@ -1315,7 +1314,6 @@ internal class DbExpressionNominator : DbExpressionVisitor
         if (expression.IsNull())
             return Add(Expression.Constant(false));
 
-        //pattern = ExpressionEvaluator.PartialEval(pattern);
         Expression newPattern = Visit(pattern);
         Expression newExpression = Visit(expression);
 
@@ -1499,7 +1497,7 @@ internal class DbExpressionNominator : DbExpressionVisitor
                 {
                     if (arg is ConstantExpression c)
                         arg = Expression.Constant(c.Value);
-                    if (arg is UnaryExpression u && (u.NodeType == ExpressionType.Convert || u.NodeType == ExpressionType.Convert))
+                    if (arg is UnaryExpression u && u.NodeType == ExpressionType.Convert )
                         arg = u.Operand;
                 }
 
@@ -1569,7 +1567,7 @@ internal class DbExpressionNominator : DbExpressionVisitor
             case "StringExtensions.End":
                 return TrySqlFunction(null, SqlFunction.RIGHT, m.Type, m.GetArgument("str"), m.GetArgument("numChars"));
             case "StringExtensions.Replicate":
-                return TrySqlFunction(null, isPostgres ? PostgresFunction.repeat.ToString() : SqlFunction.REPLICATE.ToString(), m.Type, m.GetArgument("str"), m.GetArgument("times")); ;
+                return TrySqlFunction(null, isPostgres ? PostgresFunction.repeat.ToString() : SqlFunction.REPLICATE.ToString(), m.Type, m.GetArgument("str"), m.GetArgument("times")); 
             case "StringExtensions.Reverse":
                 return TrySqlFunction(null, SqlFunction.REVERSE, m.Type, m.GetArgument("str"));
             case "StringExtensions.Like":

@@ -1,4 +1,6 @@
 
+using System.Collections.Generic;
+
 namespace Signum.Test.LinqProvider;
 
 /// <summary>
@@ -18,6 +20,7 @@ public class GroupByTest
     public void GroupStringByEnum()
     {
         var list = Database.Query<ArtistEntity>().GroupBy(a => a.Sex, a => a.Name).ToList();
+        Assert.NotEmpty(list);
     }
 
 
@@ -48,6 +51,7 @@ public class GroupByTest
                         Avg = g.Average(),
                     };
         sexos.ToList();
+        Assert.NotEmpty(sexos);
     }
 
     [Fact]
@@ -177,6 +181,7 @@ public class GroupByTest
     public void WhereGroup()
     {
         var list = Database.Query<ArtistEntity>().Where(a => a.Dead).GroupBy(a => a.Sex).ToList();
+        Assert.NotNull(list);
     }
 
     [Fact]
@@ -222,6 +227,7 @@ public class GroupByTest
     public void GroupEntityByTypeIbCount()
     {
         var list = Database.Query<AlbumEntity>().GroupBy(a => a.Author.GetType()).Select(gr => new { gr.Key, Count = gr.Count() }).ToList();
+        Assert.NotNull(list);
     }
 
     [Fact]
@@ -230,6 +236,8 @@ public class GroupByTest
         var songs = (from a in Database.Query<AlbumEntity>()
                      group a by a.Label.Name into g
                      select new { g.Key, Count = g.Count() }).ToList();
+
+        Assert.NotEmpty(songs);
     }
 
     [Fact]
@@ -338,6 +346,7 @@ public class GroupByTest
     public void SumSimplification()
     {
         var songsAlbum = Database.Query<BandEntity>().Select(a => new { a.Name, Sum = a.Members.Sum(m => m.Name.Length) }).Select(a => a.Name).ToList();
+        Assert.NotNull(songsAlbum);
     }
 
     [Fact]

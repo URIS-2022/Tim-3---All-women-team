@@ -569,9 +569,11 @@ public class EntityCodeGenerator
     {
         var mListInfo = GetMListInfo(table);
 
-        return Singularize(table.Name.Name) +
-            (IsEnum(table) ? " " :
-            mListInfo != null && !mListInfo.IsVirtual ? "Embedded" : "Entity"); 
+        if (IsEnum(table))
+        {
+            return Singularize(table.Name.Name) + " ";
+        }
+        return Singularize(table.Name.Name) + (mListInfo != null && !mListInfo.IsVirtual ? "Embedded" : "Entity");
 
     }
 
@@ -741,9 +743,8 @@ public class EntityCodeGenerator
             parts.Add("SqlDbType = SqlDbType." + col.DbType.SqlServer);
 
         var defaultSize = CurrentSchema.Settings.GetSqlSize(null, null, pair.DbType);
-        if (defaultSize != null && !(defaultSize == col.Length || defaultSize == int.MaxValue && col.Length == -1))
+        if ((defaultSize != null && !(defaultSize == col.Length || defaultSize == int.MaxValue && col.Length == -1)) && (!(defaultSize == col.Length || defaultSize == int.MaxValue && col.Length == -1)))
         {
-            if (!(defaultSize == col.Length || defaultSize == int.MaxValue && col.Length == -1))
                 if (col.Length == -1)
                 {
                     parts.Add("Size = " + "int.MaxValue");
@@ -846,7 +847,7 @@ public class EntityCodeGenerator
         StringBuilder sb = new StringBuilder();
 
         fieldName = fieldName.FirstLower();
-       // string propertyName = fieldName.FirstUpper();
+       
         string typeName = GetEmbeddedTypeName(fieldName);
 
         sb.AppendLine("public {0} {1} { get; set; }".FormatWith(typeName, fieldName.FirstUpper()));

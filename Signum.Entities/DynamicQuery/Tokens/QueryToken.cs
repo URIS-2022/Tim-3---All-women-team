@@ -310,8 +310,6 @@ public abstract class QueryToken : IEquatable<QueryToken>
 
     public static List<QueryToken> TimeOnlyProperties(QueryToken parent, DateTimePrecision precision)
     {
-        string utc = Clock.Mode == TimeZoneMode.Utc ? "Utc - " : "";
-
         return new List<QueryToken?>
         {
             precision < DateTimePrecision.Hours ? null: new NetPropertyToken(parent, ReflectionTools.GetPropertyInfo((TimeOnly dt)=>dt.Hour), () => QueryTokenMessage.Hour.NiceToString()),

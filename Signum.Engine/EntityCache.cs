@@ -23,7 +23,6 @@ public class EntityCache: IDisposable
             else if (!object.ReferenceEquals(ident, e))
             {
                 //Odd but allowed
-                //throw new InvalidOperationException("There's a different instance of the same entity with Type '{0}' and Id '{1}'".FormatWith(ie.GetType().Name, ie.id));
             }
         }
 
@@ -129,17 +128,16 @@ public class EntityCache: IDisposable
         foreach (var item in objects)
             Add(item);
     }
-
-    public static void Add<T>(IEnumerable<T> objects)
-        where T: Entity
-    {
-        foreach (var item in objects)
-            Add(item);
-    }
-
     public static void AddFullGraph(ModifiableEntity ie)
     {
         Current.AddFullGraph(ie);
+    }
+
+    public static void Add<T>(IEnumerable<T> objects)
+     where T : Entity
+    {
+        foreach (var item in objects)
+            Add(item);
     }
 
     public static void Add(Entity ie)

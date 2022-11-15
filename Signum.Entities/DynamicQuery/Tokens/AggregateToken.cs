@@ -30,7 +30,7 @@ public class AggregateToken : QueryToken
 
     public AggregateToken(AggregateFunction function, QueryToken parent, FilterOperation? filterOperation = null, object? value = null, bool distinct = false)
     {
-        this.parent = parent ?? throw new ArgumentNullException("parent");
+        this.parent = parent ?? throw new ArgumentNullException(nameof(parent));
         this.AggregateFunction = function;
 
         if (function == AggregateFunction.Count)
@@ -55,7 +55,7 @@ public class AggregateToken : QueryToken
 
     public override string ToString()
     {
-        //string? suffix = GetNiceOperation();
+        
 
         return " ".Combine(AggregateFunction.NiceToString(), this.GeNiceDistinct(), this.GetNiceOperation(), this.GetNiceValue());
     }

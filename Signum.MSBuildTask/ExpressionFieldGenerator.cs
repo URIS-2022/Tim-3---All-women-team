@@ -168,7 +168,7 @@ internal class ExpressionFieldGenerator
         {
             if (closureType != null && v.VariableType == closureType)
             {
-
+                //this if block should not be empty
             }
             else
             {
@@ -305,7 +305,7 @@ internal class ExpressionFieldGenerator
         var fork = reader.Clone();
         if (//Expression.Constant(typeof(ThisType), this)
             fork.TryGet(OpCodes.Ldarg, 0) != null &&
-            fork.TryGet(OpCodes.Ldtoken) is Instruction ldTok && ldTok.Operand.Equals(thisType) &
+            fork.TryGet(OpCodes.Ldtoken) is Instruction ldTok && ldTok.Operand.Equals(thisType) &&
             fork.TryGetCall(nameof(Type.GetTypeFromHandle)) != null &&
             fork.TryGetCall(nameof(Expression.Constant)) != null)
         {

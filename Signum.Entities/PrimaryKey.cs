@@ -69,7 +69,7 @@ public struct PrimaryKey : IEquatable<PrimaryKey>, IComparable, IComparable<Prim
     public bool Equals(PrimaryKey other)
     {
         if (other.Object.GetType() != this.Object.GetType())
-            throw new InvalidOperationException("Comparing PrimaryKey of types {0} with anotherone of the {1}".FormatWith(other.Object.GetType(), this.Object.GetType()));
+            throw new NotImplementedException("Comparing PrimaryKey of types {0} with anotherone of the {1}".FormatWith(other.Object.GetType(), this.Object.GetType()));
 
         return other.Object.Equals(this.Object);
     }

@@ -23,6 +23,7 @@ public class EntityContextTest
     public void EntityIdEmbeddedMember()
     {
         var authors = Database.Query<AlbumEntity>().Count(a => EntityContext.EntityId(a.BonusTrack!.Name) == a.Id);
+        Assert.NotNull(authors);
     }
 
     [Fact]

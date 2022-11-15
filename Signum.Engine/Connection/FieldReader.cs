@@ -87,13 +87,13 @@ public class FieldReader
         };
     }
 
-    public byte[]? GetByteArray(int ordinal)
+    public byte[] GetByteArray(int ordinal)
     {
         LastOrdinal = ordinal;
         LastMethodName = nameof(GetByteArray);
         if (reader.IsDBNull(ordinal))
         {
-            return null;
+            return Array.Empty<byte>();
         }
 
         return (byte[])reader.GetValue(ordinal);

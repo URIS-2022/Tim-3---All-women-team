@@ -20,8 +20,6 @@ public static class PostgresCatalogSchema
 
             using (Administrator.OverrideDatabaseInSysViews(db))
             {
-                var databaseName = db == null ? Connector.Current.DatabaseName() : db.Name;
-
                 var tables =
                     (from ns in Database.View<PgNamespace>()
                      where !ns.IsInternal()
@@ -38,7 +36,6 @@ public static class PostgresCatalogSchema
                          // join sc in t.Columns() on p.start_column_id equals sc.column_id
                          // join ec in t.Columns() on p.end_column_id equals ec.column_id
                          // select new DiffPeriod
-                         // {
                          //     StartColumnName = sc.name,
                          //     EndColumnName = ec.name,
                          // }).SingleOrDefaultEx(),

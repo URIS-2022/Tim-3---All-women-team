@@ -227,7 +227,6 @@ internal class OverloadingSimplifier : ExpressionVisitor
                     group = Expression.Call(method, group);
                 }
 
-                //IQueryable<R> Join<TOuter, TInner, TKey, R>(this IQueryable<TOuter> outer, IEnumerable<TInner> inner, Expression<Func<TOuter, TKey>> outerKeySelector, Expression<Func<TInner, TKey>> innerKeySelector, Expression<Func<TOuter, TInner, R>> resultSelector);
 
                 MethodInfo mij = (query ? miJoinQ : miJoinE)
                     .MakeGenericMethod(tO, groupingType, tK, tR);
@@ -250,7 +249,7 @@ internal class OverloadingSimplifier : ExpressionVisitor
             {
                 var source = Visit(m.GetArgument("source"));
 
-                var keySelector = (LambdaExpression)Visit(m.GetArgument("keySelector")).StripQuotes();
+                var keySelector = Visit(m.GetArgument("keySelector")).StripQuotes();
 
                 Type elemType = source.Type.ElementType()!;
 
@@ -449,34 +448,34 @@ internal class OverloadingSimplifier : ExpressionVisitor
     }
 
 
-    protected override Expression VisitMember(MemberExpression m)
+    protected override Expression VisitMember(MemberExpression node)
     {
-        if (m.Expression != null && m.Expression.Type.IsGenericType && m.Expression.Type.GetGenericTypeDefinition() == typeof(MList<>) && m.Member is PropertyInfo && m.Member.Name == "Count")
+        if (node.Expression != null && node.Expression.Type.IsGenericType && node.Expression.Type.GetGenericTypeDefinition() == typeof(MList<>) && node.Member is PropertyInfo && node.Member.Name == "Count")
         {
-            Type[] paramTypes = m.Expression.Type.GetGenericArguments();
+            Type[] paramTypes = node.Expression.Type.GetGenericArguments();
 
             MethodInfo mCount = (miCountE).MakeGenericMethod(paramTypes[0]);
 
-            var source = Visit(m.Expression);
+            var source = Visit(node.Expression);
 
             return Expression.Call(mCount, source);
         }
 
-        if(m.Expression != null && m.Member.Name == "Value" && m.Expression.Type.IsNullable())
+        if(node.Expression != null && node.Member.Name == "Value" && node.Expression.Type.IsNullable())
         {
-            var source = Visit(m.Expression);
+            var source = Visit(node.Expression);
 
             return source.UnNullify();
         }
 
-        if (m.Expression != null && m.Member.Name == "HasValue" && m.Expression.Type.IsNullable())
+        if (node.Expression != null && node.Member.Name == "HasValue" && node.Expression.Type.IsNullable())
         {
-            var source = Visit(m.Expression);
+            var source = Visit(node.Expression);
 
             return Expression.NotEqual(source, Expression.Constant(null, source.Type.Nullify()));
         }
 
-        return base.VisitMember(m);
+        return base.VisitMember(node);
     }
 
     MethodCallExpression VisitFormat(MethodCallExpression m)
@@ -496,9 +495,9 @@ internal class OverloadingSimplifier : ExpressionVisitor
         }));
     }
 
-    protected override Expression VisitBinary(BinaryExpression b)
+    protected override Expression VisitBinary(BinaryExpression node)
     {
-        var r = (BinaryExpression)base.VisitBinary(b);
+        var r = (BinaryExpression)base.VisitBinary(node);
 
         if (r.NodeType == ExpressionType.Add &&
             (r.Left.Type == typeof(string)) != (r.Right.Type == typeof(string)))

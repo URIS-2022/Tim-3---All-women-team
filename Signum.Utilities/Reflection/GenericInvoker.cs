@@ -122,17 +122,17 @@ class GeneratorVisitor : ExpressionVisitor
         return result;
     }
 
-    protected override Expression VisitLambda<T>(Expression<T> lambda)
+    protected override Expression VisitLambda<T>(Expression<T> node)
     {
-        var returnType = lambda.Type.GetMethod("Invoke")!.ReturnType;
+        var returnType = node.Type.GetMethod("Invoke")!.ReturnType;
 
-        Expression body = Convert(this.Visit(lambda.Body), returnType);
+        Expression body = Convert(this.Visit(node.Body), returnType);
 
-        if (body != lambda.Body)
+        if (body != node.Body)
         {
-            return Expression.Lambda(lambda.Type, body, lambda.Parameters);
+            return Expression.Lambda(node.Type, body, node.Parameters);
         }
-        return lambda;
+        return node;
     }
 
     private Expression Convert(Expression result, Type type)

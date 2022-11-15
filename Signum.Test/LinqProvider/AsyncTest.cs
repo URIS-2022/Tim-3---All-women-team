@@ -16,12 +16,14 @@ public class AsyncTest
     public void ToListAsync()
     {
         var artistsInBands = Database.Query<BandEntity>().ToListAsync().Result;
+        Assert.NotNull(artistsInBands);
     }
 
     [Fact]
     public void ToArrayAsync()
     {
         var artistsInBands = Database.Query<BandEntity>().ToArrayAsync().Result;
+        Assert.NotNull(artistsInBands);
     }
 
     [Fact]

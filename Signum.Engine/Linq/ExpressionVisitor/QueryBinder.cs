@@ -176,7 +176,6 @@ internal class QueryBinder : ExpressionVisitor
         else if (m.Method.DeclaringType == typeof(Lite) && (m.Method.Name == "ToLite" || m.Method.Name == "ToLiteFat"))
         {
             var entity = Visit(m.GetArgument("entity"));
-            var converted = EntityCasting(entity, Lite.Extract(m.Type)!)!;
             
             
             Expression? model = Visit(m.TryGetArgument("model")); //could be null
@@ -2239,7 +2238,6 @@ internal class QueryBinder : ExpressionVisitor
 
         if (expressions.All(i => i.Value is PrimaryKeyExpression))
         {
-            var type = expressions.Select(i => i.Value.Type).Distinct().SingleEx();
 
             var dic = expressions.SelectDictionary(exp => ((PrimaryKeyExpression)exp).Value);
 
@@ -2498,7 +2496,6 @@ internal class QueryBinder : ExpressionVisitor
 
             //if (left is ProjectionExpression && !((ProjectionExpression)left).IsOneCell  ||
             //    right is ProjectionExpression && !((ProjectionExpression)right).IsOneCell)
-            //    throw new InvalidOperationException("Comparing {0} and {1} is not valid in SQL".FormatWith(b.Left.ToString(), b.Right.ToString()));
 
             if (left.Type.IsNullable() == right.Type.IsNullable())
                 return Expression.MakeBinary(b.NodeType, left, right, b.IsLiftedToNull, b.Method);
@@ -3409,7 +3406,6 @@ class UnionAllRequest : ExpansionRequest, QueryBinder.ICombineStrategy
 
             var dirty = (DityExpression)kvp.Value;
 
-            var table = Implementations[kvp.Key].Table;
 
             var projector = ColumnUnionProjector.Project(dirty.projector, dirty.candidates, this, kvp.Key);
 
@@ -3516,7 +3512,6 @@ class QueryJoinExpander : DbExpressionVisitor
 
         var reqs = requests.TryGetC(source);
 
-        //if (reqs != null)
         //    requests.Remove(source);
 
         var result = base.VisitSource(source);
@@ -3806,7 +3801,6 @@ class AssignAdapterExpander : DbExpressionVisitor
         }
         else if (left.IsNull() && right.IsNull())
         {
-            Type type = left.Type.Nullify();
             var newRight = DbExpressionNominator.ConvertNull(right, left.Type.Nullify());
 
             return Expression.Condition(condition, left, newRight);

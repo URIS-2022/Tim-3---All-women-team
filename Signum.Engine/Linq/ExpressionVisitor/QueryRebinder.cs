@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace Signum.Engine.Linq;
 
@@ -230,11 +231,9 @@ internal class QueryRebinder : DbExpressionVisitor
     {
         List<OrderExpression> result = new List<OrderExpression>();
         HashSet<Expression> used = new HashSet<Expression>();
-        foreach (var ord in orderBy)
-        {
-            if (used.Add(ord.Expression))
-                result.Add(ord);
-        }
+        result.AddRange(from ord in orderBy
+                        where used.Add(ord.Expression)
+                        select ord);
         return result.AsReadOnly();
     }
 
@@ -254,7 +253,6 @@ internal class QueryRebinder : DbExpressionVisitor
             {
                 ColumnExpression? colExp = CurrentScope[col];
                 //if (expr is ColumnExpression colExp)
-                //{
                 ColumnDeclaration? cd = cg.Columns.FirstOrDefault(c => c!.Expression.Equals(colExp));
                 if (cd == null)
                     cd = cg.MapColumn(colExp!);

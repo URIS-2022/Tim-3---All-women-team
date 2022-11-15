@@ -78,7 +78,7 @@ public class PropertyRoute : IEquatable<PropertyRoute>, ISerializable
 
     MemberInfo GetMember(string fieldOrProperty)
     {
-        if (fieldOrProperty.Contains("."))
+        if (fieldOrProperty.Contains('.'))
             throw new ArgumentException($"{nameof(fieldOrProperty)} contains '.'");
 
         if (fieldOrProperty.StartsWith("["))
@@ -347,7 +347,7 @@ public class PropertyRoute : IEquatable<PropertyRoute>, ISerializable
             if (text.Length == 0)
                 return new Sequence<string>();
 
-            if (text.Contains("["))
+            if (text.Contains('['))
                 return new Sequence<string>
                 {
                     splitMixin(text.Before("[")),
@@ -372,7 +372,7 @@ public class PropertyRoute : IEquatable<PropertyRoute>, ISerializable
 
         Sequence<string> splitIndexer(string text) 
         {
-            if (text.Contains("/"))
+            if (text.Contains('/'))
                 return new Sequence<string>
                 {
                     splitDot(text.Before("/")),

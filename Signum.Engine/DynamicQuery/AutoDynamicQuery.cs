@@ -38,13 +38,13 @@ public class AutoDynamicQueryCore<T> : DynamicQueryCore<T>
         }
     }
 
-    public override async Task<ResultTable> ExecuteQueryAsync(QueryRequest request, CancellationToken token)
+    public override async Task<ResultTable> ExecuteQueryAsync(QueryRequest request, CancellationToken cancellationToken)
     {
         using (SystemTime.Override(request.SystemTime))
         {
             DQueryable<T> query = GetDQueryable(request, out var inMemoryOrders);
 
-            var result = await query.TryPaginateAsync(request.Pagination, request.SystemTime, token);
+            var result = await query.TryPaginateAsync(request.Pagination, request.SystemTime, cancellationToken);
 
             result = result.SelectManySubQueries();
 
@@ -74,13 +74,13 @@ public class AutoDynamicQueryCore<T> : DynamicQueryCore<T>
         }
     }
 
-    public override async Task<ResultTable> ExecuteQueryGroupAsync(QueryRequest request, CancellationToken token)
+    public override async Task<ResultTable> ExecuteQueryGroupAsync(QueryRequest request, CancellationToken cancellationToken)
     {
         using (SystemTime.Override(request.SystemTime))
         {
             DQueryable<T> query = GetDQueryableGroup(request, out var inMemoryOrders);
 
-            var result = await query.TryPaginateAsync(request.Pagination, request.SystemTime, token);
+            var result = await query.TryPaginateAsync(request.Pagination, request.SystemTime, cancellationToken);
 
             if (inMemoryOrders != null)
             {
@@ -93,7 +93,7 @@ public class AutoDynamicQueryCore<T> : DynamicQueryCore<T>
 
     private DQueryable<T> GetDQueryable(QueryRequest request, out List<Order>? inMemoryOrders)
     {
-        if (!request.Columns.Where(c => c is _EntityColumn).Any())
+        if (!request.Columns.Any(c => c is _EntityColumn))
             request.Columns.Insert(0, new _EntityColumn(EntityColumnFactory().BuildColumnDescription(), QueryName));
 
         if (request.MultiplicationsInSubQueries())
@@ -187,7 +187,7 @@ public class AutoDynamicQueryCore<T> : DynamicQueryCore<T>
         }
     }
 
-    public override async Task<object?> ExecuteQueryValueAsync(QueryValueRequest request, CancellationToken token)
+    public override async Task<object?> ExecuteQueryValueAsync(QueryValueRequest request, CancellationToken cancellationToken)
     {
         using (SystemTime.Override(request.SystemTime))
         {
@@ -196,15 +196,15 @@ public class AutoDynamicQueryCore<T> : DynamicQueryCore<T>
             .Where(request.Filters);
 
             if (request.ValueToken == null)
-                return await Untyped.CountAsync(query.Query, token, query.Context.ElementType);
+                return await Untyped.CountAsync(query.Query, cancellationToken, query.Context.ElementType);
 
             if (request.ValueToken is AggregateToken at)
-                return await query.SimpleAggregateAsync(at, token);
+                return await query.SimpleAggregateAsync(at, cancellationToken);
 
             if (request.MultipleValues)
-                return await query.SelectOne(request.ValueToken).ToListAsync(token);
+                return await query.SelectOne(request.ValueToken).ToListAsync(cancellationToken);
 
-            return await query.SelectOne(request.ValueToken).UniqueAsync(UniqueType.SingleOrDefault, token);
+            return await query.SelectOne(request.ValueToken).UniqueAsync(UniqueType.SingleOrDefault, cancellationToken);
         }
     }
 
@@ -225,7 +225,7 @@ public class AutoDynamicQueryCore<T> : DynamicQueryCore<T>
         return (Lite<Entity>?)result;
     }
 
-    public override async Task<Lite<Entity>?> ExecuteUniqueEntityAsync(UniqueEntityRequest request, CancellationToken token)
+    public override async Task<Lite<Entity>?> ExecuteUniqueEntityAsync(UniqueEntityRequest request, CancellationToken cancellationToken)
     {
         var ex = new _EntityColumn(EntityColumnFactory().BuildColumnDescription(), QueryName);
 
@@ -237,7 +237,7 @@ public class AutoDynamicQueryCore<T> : DynamicQueryCore<T>
 
         var result = await orderQuery
             .SelectOne(ex.Token)
-            .UniqueAsync(request.UniqueType, token);
+            .UniqueAsync(request.UniqueType, cancellationToken);
 
         return (Lite<Entity>?)result;
     }

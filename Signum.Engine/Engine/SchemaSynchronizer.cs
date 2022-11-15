@@ -253,7 +253,7 @@ public static class SchemaSynchronizer
                                     var result = SqlPreCommand.Combine(Spacing.Simple,
                                         tabCol.PrimaryKey && dif.PrimaryKeyName != null ? sqlBuilder.DropPrimaryKeyConstraint(tab.Name) : null,
                                         AlterTableAddColumnDefault(sqlBuilder, tab, tabCol, replacements,
-                                            forceDefaultValue: cn.EndsWith("_HasValue") && dif.Columns.Values.Any(c => c.Name.StartsWith(cn.Before("HasValue")) && c.Nullable == false) ? "1" : null,
+                                            forceDefaultValue: cn.EndsWith("_HasValue") && dif.Columns.Values.Any(c => c.Name.StartsWith(cn.Before("HasValue")) && !c.Nullable) ? "1" : null,
                                             hasValueFalse: hasValueFalse,
                                             avoidDefault: isNewImplementedIBAColumn && tabCol.Nullable == IsNullable.Forced));
 
@@ -464,7 +464,7 @@ public static class SchemaSynchronizer
                     var controlledIndexes = Synchronizer.SynchronizeScript(Spacing.Simple,
                         modelIxs.Where(kvp => kvp.Value.GetType() == typeof(TableIndex)).ToDictionary(),
                         dif.Indices.Where(kvp => !kvp.Value.IsPrimary).ToDictionary(),
-                        createNew: (i, mix) => mix is UniqueTableIndex || mix.Columns.Any(isNew) || (replacements.Interactive ? SafeConsole.Ask(ref createMissingFreeIndexes, "Create missing non-unique index {0} in {1}?".FormatWith(mix.IndexName, tab.Name)) : true) ? sqlBuilder.CreateIndexBasic(mix, forHistoryTable: true) : null,
+                        createNew: (i, mix) => mix is UniqueTableIndex || mix.Columns.Any(isNew) || (replacements.Interactive && SafeConsole.Ask(ref createMissingFreeIndexes, "Create missing non-unique index {0} in {1}?".FormatWith(mix.IndexName, tab.Name))) ? sqlBuilder.CreateIndexBasic(mix, forHistoryTable: true) : null,
                         removeOld: null,
                         mergeBoth: (i, mix, dix) => {
                             if (!dix.IndexEquals(dif, mix)) 
@@ -592,7 +592,7 @@ JOIN {tabCol.ReferenceTable.Name} {fkAlias} ON {tabAlias}.{difCol.Name} = {fkAli
         return !object.Equals(name.Schema.Database, name2.Schema.Database);
     }
 
-    public static Func<SchemaName, bool> IgnoreSchema = s => s.Name.Contains("\\");
+    public static Func<SchemaName, bool> IgnoreSchema = s => s.Name.Contains('\\');
 
     private static SqlPreCommand AlterTableAddColumnDefault(SqlBuilder sqlBuilder, ITable table, IColumn column, Replacements rep, string? forceDefaultValue, bool avoidDefault, HashSet<FieldEmbedded.EmbeddedHasValueColumn> hasValueFalse)
     {

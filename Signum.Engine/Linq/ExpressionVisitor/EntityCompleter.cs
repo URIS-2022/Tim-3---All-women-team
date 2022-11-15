@@ -79,7 +79,6 @@ internal class EntityCompleter : DbExpressionVisitor
 
     private Expression GetModel(EntityExpression entityExp, Type modelType)
     {
-        //if (modelType == typeof(string))
         //    return binder.BindMethodCall(Expression.Call(entityExp, EntityExpression.ToStringMethod));
 
         var mce = Lite.GetModelConstructorExpression(entityExp.Type, modelType);

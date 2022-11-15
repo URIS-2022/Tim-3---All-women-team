@@ -4,7 +4,7 @@ namespace Signum.Engine.Connection;
 
 public static class SqlServerRetry
 {
-    public static int MaxRetryCount = 6;
+    public readonly static int MaxRetryCount = 6;
 
     ///  must not be lesser than 1.
     public const double DefaultRandomFactor = 1.1;
@@ -41,7 +41,7 @@ public static class SqlServerRetry
         return new Disposable(() => _suspended.Value = true);
     }
 
-    public static Func<bool> IsEnabled = () => Connector.Current?.RequiresRetry ?? true;
+    public readonly static Func<bool> IsEnabled = () => Connector.Current?.RequiresRetry ?? true;
 
     //https://docs.microsoft.com/en-us/azure/sql-database/sql-database-connectivity-issues
     public static T Retry<T>(Func<T> action)
@@ -191,7 +191,6 @@ public static class SqlServerRetry
                     case 1205:
                     // SQL Error Code: 233
                     // The client was unable to establish a connection because of an error during connection initialization process before login.
-                    // Possible causes include the following: the client tried to connect to an unsupported version of SQL Server;
                     // the server was too busy to accept new connections; or there was a resource limitation (insufficient memory or maximum
                     // allowed connections) on the server. (provider: TCP Provider, error: 0 - An existing connection was forcibly closed by
                     // the remote host.)

@@ -15,7 +15,7 @@ internal class QueryFormatter : DbExpressionVisitor
     public static readonly AsyncThreadVariable<Func<SqlPreCommandSimple, SqlPreCommandSimple>?> PostFormatter = Statics.ThreadVariable<Func<SqlPreCommandSimple, SqlPreCommandSimple>?>("QueryFormatterPostFormatter");
 
     Schema schema = Schema.Current;
-    bool isPostgres = Schema.Current.Settings.IsPostgres;
+    readonly bool isPostgres = Schema.Current.Settings.IsPostgres;
 
     StringBuilder sb = new StringBuilder();
     int indent = 2;
@@ -926,7 +926,7 @@ internal class QueryFormatter : DbExpressionVisitor
 
     protected internal IDisposable? PrintSelectRowCount(bool returnRowCount)
     {
-        if (returnRowCount == false)
+        if (!returnRowCount)
             return null;
 
         if (!this.isPostgres)

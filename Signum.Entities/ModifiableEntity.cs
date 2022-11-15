@@ -7,6 +7,7 @@ using Signum.Entities.Reflection;
 using System.Runtime.CompilerServices;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Runtime.Serialization;
 
 namespace Signum.Entities;
 
@@ -93,7 +94,7 @@ public abstract class ModifiableEntity : Modifiable, IModifiableEntity, ICloneab
         }
 
         NotifyPrivate(pi.Name);
-        NotifyPrivate("Error");
+        NotifyPrivate(nameof(Error));
         NotifyToString();
 
         ClearTemporalError(pi.Name);
@@ -270,7 +271,7 @@ public abstract class ModifiableEntity : Modifiable, IModifiableEntity, ICloneab
 
     public void NotifyToString()
     {
-        NotifyPrivate("ToStringProperty");
+        NotifyPrivate(nameof(ToStringProperty));
     }
 
     void NotifyPrivate(string propertyName)
@@ -406,6 +407,18 @@ public abstract class ModifiableEntity : Modifiable, IModifiableEntity, ICloneab
 
     #endregion
 
+    sealed class CustomBinder : SerializationBinder
+    {
+        public override Type BindToType(string assemblyName, string typeName)
+        {
+            if (!(typeName == "ICloneable"))
+            {
+                throw new SerializationException("Only ICloneable is allowed");
+            }
+            return Assembly.Load(assemblyName).GetType(typeName)!;
+        }
+    }
+
     #region ICloneable Members
     object ICloneable.Clone()
     {
@@ -415,6 +428,7 @@ public abstract class ModifiableEntity : Modifiable, IModifiableEntity, ICloneab
         {
             bf.Serialize(stream, this);
             stream.Seek(0, SeekOrigin.Begin);
+            bf.Binder = new CustomBinder();
             return bf.Deserialize(stream);
         }
 #pragma warning restore SYSLIB0011 // Type or member is obsolete
@@ -616,7 +630,7 @@ public class NicePropertyNameExpander : IMethodExpander
 {
     public Expression Expand(Expression? instance, Expression[] arguments, MethodInfo mi)
     {
-        var lambda = (LambdaExpression)arguments[0].StripQuotes();
+        var lambda = arguments[0].StripQuotes();
 
         var niceName = ReflectionTools.BasePropertyInfo(lambda).NiceName();
 

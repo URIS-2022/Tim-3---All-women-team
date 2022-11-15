@@ -279,7 +279,7 @@ public class ResultTable
 
     public int? EndElementIndex
     {
-        get { return Pagination is Pagination.Paginate ? ((Pagination.Paginate)Pagination).EndElementIndex(Rows.Count()) : (int?)null; }
+        get { return Pagination is Pagination.Paginate ? ((Pagination.Paginate)Pagination).EndElementIndex(Rows.Length) : (int?)null; }
     }
 }
 
@@ -365,7 +365,7 @@ public class ResultRow : INotifyPropertyChanged
         {
             isDirty = value;
 
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("IsDirty"));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsDirty)));
         }
     }
 

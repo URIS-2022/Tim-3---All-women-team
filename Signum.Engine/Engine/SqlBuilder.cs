@@ -284,7 +284,7 @@ FOR EACH ROW EXECUTE PROCEDURE versioning(
 
     public string Quote(AbstractDbType type, string @default)
     {
-        if (type.IsString() && !(@default.StartsWith("'") && @default.StartsWith("'")))
+        if (type.IsString() && !(@default.StartsWith("'")))
             return "'" + @default + "'";
 
         return @default;
@@ -368,7 +368,7 @@ FOR EACH ROW EXECUTE PROCEDURE versioning(
         var primaryKey = uniqueIndex.Table.Columns.Values.Where(a => a.PrimaryKey).Only();
 
         if (primaryKey == null)
-            throw new InvalidOperationException("No primary key found"); ;
+            throw new InvalidOperationException("No primary key found"); 
 
         var oldTableName = rep.Apply(Replacements.KeyTablesInverse, uniqueIndex.Table.Name.ToString());
 
@@ -451,7 +451,7 @@ WHERE {primaryKey.Name} NOT IN
 
     internal SqlPreCommand UpdateTrim(ITable tab, IColumn tabCol)
     {
-        return new SqlPreCommandSimple("UPDATE {0} SET {1} = RTRIM({1});".FormatWith(tab.Name, tabCol.Name)); ;
+        return new SqlPreCommandSimple("UPDATE {0} SET {1} = RTRIM({1});".FormatWith(tab.Name, tabCol.Name)); 
     }
 
     public SqlPreCommand AlterTableDropConstraint(ObjectName tableName, ObjectName foreignKeyName) =>

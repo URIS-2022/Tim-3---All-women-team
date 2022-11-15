@@ -40,7 +40,6 @@ public class DynamicQueryContainer
 
     public Implementations GetEntityImplementations(object queryName)
     {
-        //AssertQueryAllowed(queryName);
         return queries.GetOrThrow(queryName).EntityImplementations;
     }
 
