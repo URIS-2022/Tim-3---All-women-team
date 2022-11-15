@@ -118,12 +118,10 @@ internal class OrderByRewriter : DbExpressionVisitor
             }
         }
 
-        if (select.IsAllAggregates)
+        if ((select.IsAllAggregates) && (gatheredKeys != null))
         {
-            if (gatheredKeys != null)
-            {
-                gatheredKeys.AddRange(select.Columns.Select(cd => new ColumnExpression(cd.Expression.Type, select.Alias, cd.Name)));
-            }
+            gatheredKeys.AddRange(select.Columns.Select(cd => new ColumnExpression(cd.Expression.Type, select.Alias, cd.Name)));
+            
         }
 
         if (select.IsDistinct)

@@ -106,6 +106,7 @@ public class GroupByTest
                         Count1 = g.Select(a => a.Name).Distinct().Count(), //Slow
                         Count2 = g.Distinct().Count(), //Slow
                     };
+        Assert.NotNull(sexes);
         sexes.ToList();
     }
 
@@ -123,6 +124,7 @@ public class GroupByTest
                         Max = g.Max(),
                         Avg = g.Average(),
                     };
+        Assert.NotNull(sexos);
         sexos.ToList();
     }
 

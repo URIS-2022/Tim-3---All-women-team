@@ -354,13 +354,6 @@ public class SchemaSettings
         if (att != null && att.HasPrecision)
             return att.Precision;
 
-        /*            if (route != null && route.Type == typeof(string))
-                    {
-                        var sla = ValidatorAttribute<StringLengthValidatorAttribute>(route);
-                        if (sla != null)
-                            return sla.Max == -1 ? int.MaxValue : sla.Max;
-                    }*/
-
         if (!this.IsPostgres)
             return defaultPrecisionSqlServer.TryGetS(dbType.SqlServer);
         else

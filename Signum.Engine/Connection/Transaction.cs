@@ -82,7 +82,10 @@ public class Transaction : IDisposableException
 
         public void Commit() { /*it is going to be implemented in future*/ }
 
-        public void Finish() { }
+        public void Finish() 
+        {
+            throw new NotSupportedException();
+        }
 
         public Dictionary<string, object> UserData
         {

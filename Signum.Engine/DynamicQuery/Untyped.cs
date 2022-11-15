@@ -88,12 +88,7 @@ public static class Untyped
         return query.Provider.CreateQuery(Expression.Call(null, mi, new Expression[] { query.Expression }));
     }
 
-    static GenericInvoker<Func<IEnumerable, int, IEnumerable>> giTakeE =
-    new((q, limit) => ((IEnumerable<string>)q).Take<string>(limit));
-    public static IEnumerable Take(IEnumerable collection, int limit, Type elementType)
-    {
-        return giTakeE.GetInvoker(elementType)(collection, limit);
-    }
+
 
     static MethodInfo miTakeQ =
       ReflectionTools.GetMethodInfo(() => ((IQueryable<string>)null!).Take(3)).GetGenericMethodDefinition();
@@ -102,6 +97,12 @@ public static class Untyped
         var mi = miTakeQ.MakeGenericMethod(elementType);
 
         return query.Provider.CreateQuery(Expression.Call(null, mi, new Expression[] { query.Expression, Expression.Constant(limit) }));
+    }
+    static GenericInvoker<Func<IEnumerable, int, IEnumerable>> giTakeE =
+            new((q, limit) => ((IEnumerable<string>)q).Take<string>(limit));
+    public static IEnumerable Take(IEnumerable collection, int limit, Type elementType)
+    {
+        return giTakeE.GetInvoker(elementType)(collection, limit);
     }
 
     static GenericInvoker<Func<IEnumerable, int, IEnumerable>> giSkipE =
@@ -120,6 +121,15 @@ public static class Untyped
         return query.Provider.CreateQuery(Expression.Call(null, mi, new Expression[] { query.Expression, Expression.Constant(limit) }));
     }
 
+    static MethodInfo miCountQ =
+    ReflectionTools.GetMethodInfo(() => ((IQueryable<string>)null!).Count()).GetGenericMethodDefinition();
+    public static int Count(IQueryable query, Type elementType)
+    {
+        var mi = miCountQ.MakeGenericMethod(elementType);
+
+        return (int)query.Provider.Execute(Expression.Call(null, mi, new Expression[] { query.Expression }))!;
+    }
+
     static GenericInvoker<Func<IEnumerable, int>> giCountE =
     new((q) => ((IEnumerable<string>)q).Count());
     public static int Count(IEnumerable collection, Type elementType)
@@ -128,14 +138,7 @@ public static class Untyped
     }
 
 
-    static MethodInfo miCountQ =
-        ReflectionTools.GetMethodInfo(() => ((IQueryable<string>)null!).Count()).GetGenericMethodDefinition();
-    public static int Count(IQueryable query, Type elementType)
-    {
-        var mi = miCountQ.MakeGenericMethod(elementType);
 
-        return (int)query.Provider.Execute(Expression.Call(null, mi, new Expression[] { query.Expression }))!;
-    }
 
     public static async Task<int> CountAsync(IQueryable query, CancellationToken token, Type elementType)
     {
@@ -191,6 +194,15 @@ public static class Untyped
         return await query.ToListAsync(token);
     }
 
+    static readonly GenericInvoker<Func<IEnumerable, Delegate, IEnumerable>> giThenByE = new((col, del) => ((IOrderedEnumerable<object>)col).ThenBy((Func<object, object?>)del));
+    static readonly GenericInvoker<Func<IEnumerable, Delegate, IEnumerable>> giThenByDescendingE = new((col, del) => ((IOrderedEnumerable<object>)col).ThenByDescending((Func<object, object?>)del));
+    public static IEnumerable ThenBy(IEnumerable collection, LambdaExpression lambda, OrderType orderType)
+    {
+        var mi = orderType == OrderType.Ascending ? giThenByE : giThenByDescendingE;
+
+        return mi.GetInvoker(lambda.Type.GetGenericArguments())(collection, lambda.Compile());
+    }
+
     static readonly GenericInvoker<Func<IEnumerable, Delegate, IEnumerable>> giOrderByE = new((col, del) => ((IEnumerable<object>)col).OrderBy((Func<object, object?>)del));
     static readonly GenericInvoker<Func<IEnumerable, Delegate, IEnumerable>> giOrderByDescendingE = new((col, del) => ((IEnumerable<object>)col).OrderByDescending((Func<object, object?>)del));
     public static IEnumerable OrderBy(IEnumerable collection, LambdaExpression lambda, OrderType orderType)
@@ -200,8 +212,7 @@ public static class Untyped
         return mi.GetInvoker(lambda.Type.GetGenericArguments())(collection, lambda.Compile());
     }
 
-    static readonly GenericInvoker<Func<IEnumerable, Delegate, IEnumerable>> giThenByE = new((col, del) => ((IOrderedEnumerable<object>)col).ThenBy((Func<object, object?>)del));
-    static readonly GenericInvoker<Func<IEnumerable, Delegate, IEnumerable>> giThenByDescendingE = new((col, del) => ((IOrderedEnumerable<object>)col).ThenByDescending((Func<object, object?>)del));
+  
 
     public static IEnumerable OrderBy(IEnumerable collection, List<(LambdaExpression lambda, OrderType orderType)> orders)
     {
@@ -229,12 +240,7 @@ public static class Untyped
 
     static MethodInfo miThenByQ = ReflectionTools.GetMethodInfo(() => Database.Query<TypeEntity>().OrderBy(t => t.Id).ThenBy(t => t.Id)).GetGenericMethodDefinition();
     static MethodInfo miThenByDescendingQ = ReflectionTools.GetMethodInfo(() => Database.Query<TypeEntity>().OrderBy(t => t.Id).ThenByDescending(t => t.Id)).GetGenericMethodDefinition();
-    public static IEnumerable ThenBy(IEnumerable collection, LambdaExpression lambda, OrderType orderType)
-    {
-        var mi = orderType == OrderType.Ascending ? giThenByE : giThenByDescendingE;
 
-        return mi.GetInvoker(lambda.Type.GetGenericArguments())(collection, lambda.Compile());
-    }
     public static IOrderedQueryable ThenBy(IOrderedQueryable query, LambdaExpression lambda, OrderType orderType)
     {
         MethodInfo mi = (orderType == OrderType.Ascending ? miThenByQ : miThenByDescendingQ).MakeGenericMethod(lambda.Type.GetGenericArguments());

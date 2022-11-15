@@ -78,10 +78,9 @@ public class LambdaToJavascriptConverter
                         return a;
                 }
 
-                if (me.Expression.Type.IsEntity())
+                if (me.Expression.Type.IsEntity() && me.Member.Name == "IdOrNull")
                 {
-                    if (me.Member.Name == "IdOrNull")
-                        return a + "." + "id";
+                    return a + "." + "id";
                 }
 
                 return a + "." + me.Member.Name.FirstLower();

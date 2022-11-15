@@ -55,10 +55,10 @@ internal class AggregateRewriter : DbExpressionVisitor
             return gatherer.aggregates;
         }
 
-        protected internal override Expression VisitAggregateRequest(AggregateRequestsExpression aggregate)
+        protected internal override Expression VisitAggregateRequest(AggregateRequestsExpression requset)
         {
-            this.aggregates.Add(aggregate);
-            return base.VisitAggregateRequest(aggregate);
+            this.aggregates.Add(requset);
+            return base.VisitAggregateRequest(requset);
         }
     }
 }

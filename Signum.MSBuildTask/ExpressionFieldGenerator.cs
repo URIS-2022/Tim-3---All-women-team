@@ -413,7 +413,7 @@ internal class ExpressionFieldGenerator
 
     private TypeReference GetExpressionType(MethodDefinition method)
     {
-        var mod = method.DeclaringType.Module;
+        
 
         var numParams = (method.Body.ThisParameter != null ? 1 : 0) + method.Parameters.Count + 1;
         var func = this.Resolver.SystemRuntime.MainModule.GetType("System", "Func`" + numParams);

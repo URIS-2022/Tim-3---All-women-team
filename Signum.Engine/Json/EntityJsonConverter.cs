@@ -474,8 +474,11 @@ public class EntityJsonConverter<T> : JsonConverterWithExisting<T>
                                             //Call attention of developer
                                             throw new InvalidOperationException($"'modified' is not set but '{pi.Name}' is modified");
                                         }
-                                        catch (Exception)
+                                        catch (Exception e)
                                         {
+                                            Console.WriteLine(e);
+                                          
+                                          
                                         }
                                     }
                                 }

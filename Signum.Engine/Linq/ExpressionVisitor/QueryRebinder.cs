@@ -205,7 +205,7 @@ internal class QueryRebinder : DbExpressionVisitor
         if (orderBy.HasItems())
             orderBy = RemoveDuplicates(orderBy);
         ReadOnlyCollection<Expression> groupBy = Visit(select.GroupBy, Visit);
-        ReadOnlyCollection<ColumnDeclaration> columns = Visit(select.Columns, VisitColumnDeclaration); ;
+        ReadOnlyCollection<ColumnDeclaration> columns = Visit(select.Columns, VisitColumnDeclaration); 
         columns = AnswerAndExpand(columns, select.Alias, askedColumns);
         var externals = CurrentScope.Where(kvp => !select.KnownAliases.Contains(kvp.Key.Alias) && kvp.Value == null).ToDictionary();
         disposable.Dispose(); ////SCOPE END

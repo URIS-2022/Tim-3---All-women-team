@@ -169,7 +169,7 @@ public static class OperationLogic
                 canExecute);
         }
 
-        var dtoConstructor = typeof(CellOperationDTO).GetConstructor(new[] { typeof(Lite<IEntity>), typeof(string), typeof(string) });
+        var dtoConstructor = typeof(CellOperationDto).GetConstructor(new[] { typeof(Lite<IEntity>), typeof(string), typeof(string) });
 
         NewExpression newExpr = Expression.New(dtoConstructor!, entity.BuildLite(), operationKey, canExecute);
 
@@ -476,6 +476,12 @@ Consider the following options:
         op.Delete(entity, args);
     }
 
+    public static void Delete<T>(this T entity, IDeleteSymbol<T> symbol, params object?[]? args)
+     where T : class, IEntity
+    {
+        var op = Find<IDeleteOperation>(entity.GetType(), symbol.Symbol).AssertEntity((Entity)(IEntity)entity);
+        op.Delete(entity, args);
+    }
     public static void ServiceDelete(Lite<IEntity> lite, OperationSymbol operationSymbol, params object?[]? args)
     {
         IEntity entity = lite.Retrieve();
@@ -483,12 +489,7 @@ Consider the following options:
         op.Delete(entity, args);
     }
 
-    public static void Delete<T>(this T entity, IDeleteSymbol<T> symbol, params object?[]? args)
-        where T : class, IEntity
-    {
-        var op = Find<IDeleteOperation>(entity.GetType(), symbol.Symbol).AssertEntity((Entity)(IEntity)entity);
-        op.Delete(entity, args);
-    }
+ 
 
     public static void ServiceDelete(Entity entity, OperationSymbol operationSymbol, params object?[]? args)
     {

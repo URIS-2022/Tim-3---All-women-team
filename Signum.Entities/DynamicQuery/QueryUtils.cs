@@ -453,7 +453,10 @@ public static class QueryUtils
                 return mce.Arguments[0];
 
             if (!idAndToStr)
-            return Expression.Property(expression, "Entity");
+            {
+                return Expression.Property(expression, "Entity");
+            }
+                
         }
         return expression;
     }

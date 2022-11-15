@@ -327,29 +327,6 @@ public class PostgreSqlConnector : Connector
 
     Exception ReplaceException(Exception ex, SqlPreCommandSimple command)
     {
-        //if (ex is Npgsql.PostgresException se)
-        //{
-        //    switch (se.Number)
-        //    {
-        //        case -2: return new TimeoutException(ex.Message, ex);
-        //        case 2601: return new UniqueKeyException(ex);
-        //        case 547: return new ForeignKeyException(ex);
-        //        default: return ex;
-        //    }
-        //}
-
-        //if (ex is SqlTypeException ste && ex.Message.Contains("DateTime"))
-        //{
-        //    var mins = command.Parameters.Where(a => DateTime.MinValue.Equals(a.Value));
-
-        //    if (mins.Any())
-        //    {
-        //        return new ArgumentOutOfRangeException("{0} {1} not initialized and equal to DateTime.MinValue".FormatWith(
-        //            mins.CommaAnd(a => a.ParameterName),
-        //            mins.Count() == 1 ? "is" : "are"), ex);
-        //    }
-        //}
-
         return ex;
     }
 
@@ -504,10 +481,9 @@ public class PostgreSqlParameterBuilder : ParameterBuilder
 {
     public override DbParameter CreateParameter(string parameterName, AbstractDbType dbType, string? udtTypeName, bool nullable, object? value)
     {
-        if (dbType.IsDate())
+        if ((dbType.IsDate()) && (value is DateTime dt))
         {
-            if (value is DateTime dt)
-                AssertDateTime(dt);
+            AssertDateTime(dt);
         }
 
         var result = new Npgsql.NpgsqlParameter(parameterName, value ?? DBNull.Value)

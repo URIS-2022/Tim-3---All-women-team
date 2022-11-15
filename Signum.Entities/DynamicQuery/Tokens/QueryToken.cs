@@ -490,7 +490,7 @@ public abstract class QueryToken : IEquatable<QueryToken>
 
     static string GetNiceTypeName(Type type, Implementations? implementations)
     {
-        if (type == typeof(CellOperationDTO))
+        if (type == typeof(CellOperationDto))
             return QueryTokenMessage.CellOperation.NiceToString();
         if (type == typeof(OperationsToken))
             return QueryTokenMessage.ContainerOfCellOperations.NiceToString();

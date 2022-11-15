@@ -10,11 +10,13 @@ public class PropertyRouteEntity : Entity
 
     public TypeEntity RootType { get; set; }
 
-    public static Func<PropertyRouteEntity, PropertyRoute> ToPropertyRouteFunc;
     public PropertyRoute ToPropertyRoute()
     {
         return ToPropertyRouteFunc(this);
     }
+
+    public static Func<PropertyRouteEntity, PropertyRoute> ToPropertyRouteFunc;
+  
 
     [AutoExpressionField]
     public override string ToString() => As.Expression(() => this.Path);
