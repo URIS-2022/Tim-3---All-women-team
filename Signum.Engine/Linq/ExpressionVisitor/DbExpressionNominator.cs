@@ -1092,13 +1092,13 @@ internal class DbExpressionNominator : DbExpressionVisitor
 
 
 
-    protected override Expression VisitConditional(ConditionalExpression c)
+    protected override Expression VisitConditional(ConditionalExpression node)
     {
-        Expression result = c;
-        Expression test = this.Visit(c.Test);
-        Expression ifTrue = this.Visit(c.IfTrue);
-        Expression ifFalse = this.Visit(c.IfFalse);
-        if (test != c.Test || ifTrue != c.IfTrue || ifFalse != c.IfFalse)
+        Expression result = node;
+        Expression test = this.Visit(node.Test);
+        Expression ifTrue = this.Visit(node.IfTrue);
+        Expression ifFalse = this.Visit(node.IfFalse);
+        if (test != node.Test || ifTrue != node.IfTrue || ifFalse != node.IfFalse)
         {
             result = Expression.Condition(test, ifTrue, ifFalse);
         }
@@ -1232,12 +1232,12 @@ internal class DbExpressionNominator : DbExpressionVisitor
         return select;
     }
 
-    protected internal override Expression VisitIn(InExpression inExp)
+    protected internal override Expression VisitIn(InExpression @in)
     {
         if (!innerProjection)
-            return Add(inExp);
+            return Add(@in);
 
-        return inExp;
+        return @in;
     }
 
     protected internal override Expression VisitExists(ExistsExpression exists)
@@ -1264,12 +1264,12 @@ internal class DbExpressionNominator : DbExpressionVisitor
         return aggregate;
     }
 
-    protected internal override Expression VisitAggregateRequest(AggregateRequestsExpression aggregate)
+    protected internal override Expression VisitAggregateRequest(AggregateRequestsExpression request)
     {
         if (!innerProjection)
-            return Add(aggregate);
+            return Add(request);
 
-        return aggregate;
+        return request;
     }
 
     protected internal override Expression VisitIsNotNull(IsNotNullExpression isNotNull)

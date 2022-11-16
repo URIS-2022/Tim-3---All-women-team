@@ -5,8 +5,8 @@ namespace Signum.Engine.Linq;
 
 internal static class SmartEqualizer
 {
-    public static ConstantExpression True = Expression.Constant(true);
-    public static ConstantExpression False = Expression.Constant(false);
+    public static readonly ConstantExpression True = Expression.Constant(true);
+    public static readonly ConstantExpression False = Expression.Constant(false);
 
 
     static ConstantExpression NewId = Expression.Constant("NewID");

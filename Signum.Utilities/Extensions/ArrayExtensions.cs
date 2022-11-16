@@ -12,7 +12,7 @@ public static class ArrayExtensions
         return result;
     }
 
-    public static T[,] Initialize<T>(this T[,] array, Func<int, int, T> valueXY)
+    private static T[,] Initialize<T>(this T[,] array, Func<int, int, T> valueXY)
     {
         for (int j = 0; j < array.GetLength(1); j++)
             for (int i = 0; i < array.GetLength(0); i++)
@@ -21,7 +21,7 @@ public static class ArrayExtensions
         return array;
     }
 
-    public static T[, ,] Initialize<T>(this T[, ,] array, Func<int, int, int, T> valueXYZ)
+    private static T[, ,] Initialize<T>(this T[, ,] array, Func<int, int, int, T> valueXYZ)
     {
         for (int k = 0; k < array.GetLength(2); k++)
             for (int j = 0; j < array.GetLength(1); j++)
@@ -31,13 +31,13 @@ public static class ArrayExtensions
         return array;
     }
 
-    public static IEnumerable<T> Row<T>(this T[,] data, int row)
+    private static IEnumerable<T> Row<T>(this T[,] data, int row)
     {
         for (int i = 0; i < data.GetLength(0); i++)
             yield return data[i, row];
     }
 
-    public static IEnumerable<T> Column<T>(this T[,] data, int column)
+    private static IEnumerable<T> Column<T>(this T[,] data, int column)
     {
         for (int j = 0; j < data.GetLength(1); j++)
             yield return data[column, j];

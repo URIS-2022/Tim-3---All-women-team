@@ -429,9 +429,9 @@ Consider the following options:
 
     public static Entity ServiceExecute(IEntity entity, OperationSymbol operationSymbol, params object?[]? args)
     {
-        var op = Find<IExecuteOperation>(entity.GetType(), operationSymbol).AssertEntity((Entity)(IEntity)entity);
+        var op = Find<IExecuteOperation>(entity.GetType(), operationSymbol).AssertEntity((Entity)entity);
         op.Execute(entity, args);
-        return (Entity)(IEntity)entity;
+        return (Entity)entity;
     }
 
     public static T ExecuteLite<T>(this Lite<T> lite, IExecuteSymbol<T> symbol, params object?[]? args)

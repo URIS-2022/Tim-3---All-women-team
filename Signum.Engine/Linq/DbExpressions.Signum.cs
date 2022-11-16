@@ -414,7 +414,7 @@ internal class LiteValueExpression : DbExpression
 
 internal abstract class TypeDbExpression : DbExpression
 {
-    public TypeDbExpression(DbExpressionType dbType, Type type)
+    protected TypeDbExpression(DbExpressionType dbType, Type type)
        : base(dbType, type)
     {
     }

@@ -32,7 +32,7 @@ public class QueryRequest : BaseQueryRequest
 
     public bool MultiplicationsInSubQueries()
     {
-        return GroupResults == false && Pagination is Pagination.All &&
+        return !GroupResults && Pagination is Pagination.All &&
             Orders.Select(a => a.Token).Concat(Columns.Select(a => a.Token)).Any(a => a.HasElement()) &&
             !Filters.SelectMany(a => a.GetFilterConditions()).Select(a => a.Token).Any(t => t.HasElement());
     }

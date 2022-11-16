@@ -461,10 +461,9 @@ public class EntityJsonConverter<T> : JsonConverterWithExisting<T>
                     }
                     else
                     {
-                        if (pi.CanWrite)
+                        if (pi.CanWrite && !EntityJsonConverter<T>.IsEquals(newValue, oldValue))
                         {
-                            if (!EntityJsonConverter<T>.IsEquals(newValue, oldValue))
-                            {
+                            
                                 if (!markedAsModified && parentRoute.RootType.IsEntity())
                                 {
                                     if (!pi.HasAttribute<IgnoreAttribute>())
@@ -493,7 +492,7 @@ public class EntityJsonConverter<T> : JsonConverterWithExisting<T>
 
                                     pc.SetValue?.Invoke(entity, newValue);
                                 }
-                            }
+                            
                         }
                     }
                 }
