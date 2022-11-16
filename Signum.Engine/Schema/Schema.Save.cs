@@ -1368,13 +1368,13 @@ internal static class SaveUtils
         }
     }
 
-    static List<T> Fill<T>(List<T> part, IList<T> original, int pos, int count)
+    static void Fill<T>(List<T> part, IList<T> original, int pos, int count)
     {
         part.Clear();
         int max = pos + count;
         for (int i = pos; i < max; i++)
             part.Add(original[i]);
-        return part;
+        return;
     }
 }
 

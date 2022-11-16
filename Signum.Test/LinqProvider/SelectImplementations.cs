@@ -86,12 +86,16 @@ public class SelectImplementationsTest1
     public void SelectEntityWithLiteIb()
     {
         var list = Database.Query<AwardNominationEntity>().Where(a => a.Award.Entity is GrammyAwardEntity).ToList();
+        Assert.NotNull(list);
+        Assert.NotEmpty(list);
     }
 
     [Fact]
     public void SelectEntityWithLiteIbType()
     {
         var list = Database.Query<AwardNominationEntity>().Where(a => a.Award.Entity.GetType() == typeof(GrammyAwardEntity)).ToList();
+        Assert.NotNull(list);
+        Assert.NotEmpty(list);
     }
 
     [Fact]
@@ -100,12 +104,16 @@ public class SelectImplementationsTest1
         Type[] types = new Type[] { typeof(GrammyAwardEntity) };
 
         var list = Database.Query<AwardNominationEntity>().Where(a => types.Contains(a.Award.Entity.GetType())).ToList();
+        Assert.NotNull(list);
+        Assert.NotEmpty(list);
     }
 
     [Fact]
     public void SelectEntityWithLiteIbRuntimeType()
     {
         var list = Database.Query<AwardNominationEntity>().Where(a => a.Award.EntityType == typeof(GrammyAwardEntity)).ToList();
+        Assert.NotNull(list);
+        Assert.NotEmpty(list);
     }
 
     [Fact]

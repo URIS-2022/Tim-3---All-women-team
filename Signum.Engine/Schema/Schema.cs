@@ -680,7 +680,6 @@ public class Schema : IImplementationsFinder
             if (!Tables.ContainsKey(root))
                 return null;
 
-            var table = Table(root);
 
             return PropertyRoute.GenerateRoutes(root)
                 .Select(r => r.Type.IsMList() ? r.Add("Item") : r)

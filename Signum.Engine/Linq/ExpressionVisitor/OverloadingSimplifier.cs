@@ -213,17 +213,14 @@ internal class OverloadingSimplifier : ExpressionVisitor
 
                 Type groupingType = typeof(IGrouping<,>).MakeGenericType(tK, tI);
                 MethodInfo miG;
-
                 if (query)
                 {
                      miG = miGroupByNQ.MakeGenericMethod(tI, tK, tI);
- 
                 }
                 else
                 {
-                     miG = miGroupByNQ.MakeGenericMethod(tI, tK, tI);
+                    miG = miGroupByNQ.MakeGenericMethod(tI, tK, tI);
                 }
-
                 ParameterExpression p = Expression.Parameter(tI, "p" + i++);
                 Expression group = Expression.Call(miG, inner, innerKeySelector, Expression.Lambda(p, p));
 

@@ -470,15 +470,13 @@ public class StringDistance
         if (sliceOld.Length > 0)
         {
             DiffPrivate(sliceOld, sliceNew, comparer, result);
-        }
-        else if (sliceOld.Length > 0)
-        {
             AddResults(result, sliceOld, DiffAction.Removed);
         }
         else if (sliceNew.Length > 0)
         {
             AddResults(result, sliceNew, DiffAction.Added);
         }
+
     }
 }
 

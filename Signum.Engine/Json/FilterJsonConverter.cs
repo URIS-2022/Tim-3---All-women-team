@@ -8,9 +8,9 @@ namespace Signum.Engine.Json;
 #pragma warning disable CS8618 // Non-nullable field is uninitialized.
 public class FilterJsonConverter : JsonConverter<FilterTS>
 {
-    public override bool CanConvert(Type objectType)
+    public override bool CanConvert(Type typeToConvert)
     {
-        return typeof(FilterTS).IsAssignableFrom(objectType);
+        return typeof(FilterTS).IsAssignableFrom(typeToConvert);
     }
 
     public override void Write(Utf8JsonWriter writer, FilterTS value, JsonSerializerOptions options)

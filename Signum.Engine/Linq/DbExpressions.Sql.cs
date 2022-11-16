@@ -105,7 +105,7 @@ internal abstract class SourceExpression : DbExpression
 {
     public abstract Alias[] KnownAliases { get; }
 
-    public SourceExpression(DbExpressionType nodeType)
+    protected SourceExpression(DbExpressionType nodeType)
         : base(nodeType, typeof(void))
     {
     }
@@ -115,7 +115,7 @@ internal abstract class SourceWithAliasExpression : SourceExpression
 {
     public readonly Alias Alias;
 
-    public SourceWithAliasExpression(DbExpressionType nodeType, Alias alias)
+    protected SourceWithAliasExpression(DbExpressionType nodeType, Alias alias)
         : base(nodeType)
     {
         this.Alias = alias;
@@ -374,6 +374,7 @@ internal enum SelectRoles
     Top = 64
 }
 
+[Flags]
 internal enum SelectOptions
 {
     Reverse = 1,

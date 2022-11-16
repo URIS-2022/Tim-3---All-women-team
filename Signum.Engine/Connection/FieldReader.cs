@@ -639,6 +639,7 @@ public class FieldReader
     }
 }
 
+[Serializable]
 public class FieldReaderException : DbException
 {
     public int? Ordinal { get; internal set; }
